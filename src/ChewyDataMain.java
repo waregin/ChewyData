@@ -15,18 +15,7 @@ public class ChewyDataMain {
 	public static void main(String[] args) throws IOException {
 		Document primaryPage = Jsoup.connect("https://www.chewy.com/b/dental-chews-1463").get();
 
-		List<String> pageUrlList = new ArrayList<>();
-		Elements paginationItems = primaryPage.getElementsByAttributeValue("class",
-				"pagination_selection cw-pagination__item");
-		if (paginationItems.size() > 1) {
-			int numPages = Integer.parseInt(paginationItems.last().text());
-			String pageTwoUrl = paginationItems.first().attr("href");
-			pageUrlList.add("https://www.chewy.com" + pageTwoUrl);
-			for (int i = 3; i <= numPages; i++) {
-				String pageUrl = pageTwoUrl.replace("p2", "p" + i);
-				pageUrlList.add("https://www.chewy.com" + pageUrl);
-			}
-		}
+		List<String> pageUrlList = generatePageUrlList(primaryPage);
 
 		List<String> productUrlList = findProductUrls(primaryPage);
 		for (String pageUrl : pageUrlList) {
@@ -41,43 +30,63 @@ public class ChewyDataMain {
 
 			Element options = document.getElementById("vue-portal__sfw-attribute-buttons");
 			if (options != null) {
-				String baseUrl = productUrl.substring(0, productUrl.lastIndexOf("/") + 1);
-				String attributes = options.attr("data-attributes");
-				attributes = attributes.substring(attributes.indexOf("attributeValues"));
-				while (attributes.indexOf("skuDto") != -1) {
-					String skuDto = "skuDto\":{\"id\":";
-					attributes = attributes.substring(attributes.indexOf(skuDto) + skuDto.length());
-					String sku = attributes.substring(0, attributes.indexOf(","));
-					String url = baseUrl + sku;
-
-					Document option = Jsoup.connect(url).get();
-					if (DOGS && !isForBigDogs(option)) {
-						continue;
-					}
-					ChewyProduct product = generateProduct(url, option);
-
-					String value = "\"value\":\"";
-					attributes = attributes.substring(attributes.indexOf(value) + value.length());
-					product.option = attributes.substring(0, attributes.indexOf("\""));
-
-					int endIndex = attributes.indexOf("skuDto");
-					String sizeString;
-					String countString;
-					if (endIndex > 0) {
-						countString = sizeString = attributes.substring(0, endIndex);
-					} else {
-						countString = sizeString = attributes;
-					}
-					countString = countString.substring(countString.indexOf(COUNT_KEY) + COUNT_KEY.length());
-					product.count = countString.substring(0, countString.indexOf("\""));
-					sizeString = sizeString.substring(sizeString.indexOf(SIZE_KEY) + SIZE_KEY.length());
-					product.size = sizeString.substring(0, sizeString.indexOf("\""));
-
-					System.out.println(product);
-				}
+				generateProductsFromOptions(productUrl, options);
 			} else {
 				System.out.println(generateProduct(productUrl, document));
 			}
+		}
+	}
+
+	private static List<String> generatePageUrlList(Document primaryPage) {
+		List<String> pageUrlList = new ArrayList<>();
+		Elements paginationItems = primaryPage.getElementsByAttributeValue("class",
+				"pagination_selection cw-pagination__item");
+		if (paginationItems.size() > 1) {
+			int numPages = Integer.parseInt(paginationItems.last().text());
+			String pageTwoUrl = paginationItems.first().attr("href");
+			pageUrlList.add("https://www.chewy.com" + pageTwoUrl);
+			for (int i = 3; i <= numPages; i++) {
+				String pageUrl = pageTwoUrl.replace("p2", "p" + i);
+				pageUrlList.add("https://www.chewy.com" + pageUrl);
+			}
+		}
+		return pageUrlList;
+	}
+
+	private static void generateProductsFromOptions(String productUrl, Element options) throws IOException {
+		String baseUrl = productUrl.substring(0, productUrl.lastIndexOf("/") + 1);
+		String attributes = options.attr("data-attributes");
+		attributes = attributes.substring(attributes.indexOf("attributeValues"));
+		while (attributes.indexOf("skuDto") != -1) {
+			String skuDto = "skuDto\":{\"id\":";
+			attributes = attributes.substring(attributes.indexOf(skuDto) + skuDto.length());
+			String sku = attributes.substring(0, attributes.indexOf(","));
+			String url = baseUrl + sku;
+
+			Document option = Jsoup.connect(url).get();
+			if (DOGS && !isForBigDogs(option)) {
+				continue;
+			}
+			ChewyProduct product = generateProduct(url, option);
+
+			String value = "\"value\":\"";
+			attributes = attributes.substring(attributes.indexOf(value) + value.length());
+			product.option = attributes.substring(0, attributes.indexOf("\""));
+
+			int endIndex = attributes.indexOf("skuDto");
+			String sizeString;
+			String countString;
+			if (endIndex > 0) {
+				countString = sizeString = attributes.substring(0, endIndex);
+			} else {
+				countString = sizeString = attributes;
+			}
+			countString = countString.substring(countString.indexOf(COUNT_KEY) + COUNT_KEY.length());
+			product.count = countString.substring(0, countString.indexOf("\""));
+			sizeString = sizeString.substring(sizeString.indexOf(SIZE_KEY) + SIZE_KEY.length());
+			product.size = sizeString.substring(0, sizeString.indexOf("\""));
+
+			System.out.println(product);
 		}
 	}
 
