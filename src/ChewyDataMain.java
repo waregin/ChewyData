@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -11,6 +13,7 @@ public class ChewyDataMain {
 	private static final boolean DOGS = true;
 	private static final String SIZE_KEY = "\"identifier\":\"SizeStandard\",\"name\":\"Size Standard\",\"value\":\"";
 	private static final String COUNT_KEY = "\"identifier\":\"CountStandard\",\"name\":\"Count Standard\",\"value\":\"";
+	private static Set<String> skus = new HashSet<>();
 
 	public static void main(String[] args) throws IOException {
 		Document primaryPage = Jsoup.connect("https://www.chewy.com/b/dental-chews-1463").get();
@@ -60,7 +63,12 @@ public class ChewyDataMain {
 		while (attributes.indexOf("skuDto") != -1) {
 			String skuDto = "skuDto\":{\"id\":";
 			attributes = attributes.substring(attributes.indexOf(skuDto) + skuDto.length());
+
 			String sku = attributes.substring(0, attributes.indexOf(","));
+			if (!skus.add(sku)) {
+				continue;
+			}
+			
 			String url = baseUrl + sku;
 
 			Document option = Jsoup.connect(url).get();
@@ -115,6 +123,7 @@ public class ChewyDataMain {
 
 		String[] splits = product.URL.split("/");
 		product.sku = splits[splits.length - 1];
+		skus.add(product.sku);
 
 		product.imageUrl = document.getElementsByAttributeValue("id", "Zoomer").first().child(0).attr("data-src");
 
