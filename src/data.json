@@ -1,0 +1,1420 @@
+[
+	{
+		"id": 402,
+		"sequence": 18.0,
+		"name": "Count",
+		"identifier": "Count",
+		"attributeValues": [
+			{
+				"id": 42226,
+				"attributeId": 402,
+				"sequence": 0.0,
+				"value": "1 count",
+				"isSelected": false,
+				"isAvailable": true,
+				"sku": {
+					"id": 106679,
+					"type": "Item",
+					"partNumber": "78841",
+					"name": "Ultra Chewy Double Treat Bones Dog Treat, 1 count",
+					"longDescription": "Teach your sidekick a new trick with Ultra Chewy Double Treat Bones Chicken Flavor Dog Treats. These tasty dental treats for dogs are formulated with a highly digestible rice recipe that’s packed with an irresistible chicken flavor. They are crafted with a double layer to help control plaque and tartar for better oral health as your companion chews. These dental treats feature added vitamins and minerals that make them paw-fect for dogs of all breeds over one year of age.",
+					"thumbnail": "//img.chewy.com/is/image/catalog/78841_MAIN,1585663044",
+					"fullImage": "//img.chewy.com/is/image/catalog/78841_MAIN,1585663044",
+					"price": [
+						{
+							"type": "OFFER",
+							"value": "2.58"
+						}
+					],
+					"manufacturer": "Ultra Chewy",
+					"manufacturerPartNumber": "1284",
+					"gtin": "877869001284",
+					"keywords": ",easy digest",
+					"parentCatalogEntryId": 106678,
+					"parentCatalogGroupId": [
+						1463,
+						1539
+					],
+					"published": true,
+					"buyable": true,
+					"startDate": 1406678400000,
+					"lastUpdate": 1612215195933,
+					"rating": 4.194,
+					"ratingCount": 67,
+					"packaging": {
+						"weight": 0.175,
+						"packagedWeight": 0.18,
+						"packagedLength": 8.0,
+						"packagedWidth": 1.0,
+						"packagedHeight": 1.0,
+						"weightMeasure": {
+							"id": "LBR",
+							"description": "pound"
+						},
+						"sizeMeasure": {
+							"id": "INH",
+							"description": "inch"
+						},
+						"nominalQuantity": 1.0,
+						"quantityMultiple": 1.0,
+						"quantityMeasure": {
+							"id": "EA",
+							"description": "each"
+						}
+					},
+					"attachmentasset": [
+						{
+							"id": 76807,
+							"usage": "FeedingInstructions",
+							"mimeType": "text/markdown",
+							"longDescription": "|Weight|Bones per Week|\r\n|---|---|\r\n|4- to 11-lbs|1-2|\r\n|11- to 20-lbs|2-3|\r\n|20- to 30-lbs|3-4|\r\n|30- to 42-lbs|4-5|\r\n|42- to 56-lbs|5-6|\r\n|Over 56-lbs|1 per 14-lbs body weight|\r\n\r\nFeed anytime as a treat or training reward. This treat should not replace your pet\u0027s regular meal. This treat may not be suitable for puppies, toy breeds, or any dog with a sensitive stomachs. Like any other treat, always supervise your dog while chewing. Remove and discard treat if your pet attempts to swallow large pieces. To avoid stains, do not feed over a carpeted area. Make sure to provide plenty of fresh water for your dog at all times. Regular veterinary visits are recommended to ensure your dog\u0027s good health."
+						},
+						{
+							"id": 195020,
+							"usage": "GuaranteedAnalysis",
+							"mimeType": "text/markdown",
+							"longDescription": "|Guaranteed Analysis||\r\n|---|---:|\r\n|Crude Protein|8.0% min|\r\n|Crude Fat|3.2% min|\r\n|Crude Fiber|3.5% max|\r\n|Moisture|20.0% max|\r\n|Phosphorus|0.35% min|\r\n|Potassium|0.27% min|\r\n|Vitamin A|2000 i.i/kg min|\r\n|Vitamin E|10 i.i/kg min|"
+						},
+						{
+							"id": 599407,
+							"path": "//img.chewy.com/is/image/catalog/78841_PT2,1585662953",
+							"usage": "PT2",
+							"sequence": 2002.0
+						}
+					],
+					"attribute": [
+						{
+							"id": 402,
+							"identifier": "Count",
+							"name": "Count",
+							"groupName": "Defining",
+							"usage": "DEFINING",
+							"sequence": 18.0,
+							"displayable": true,
+							"searchable": true,
+							"value": [
+								{
+									"id": 42226,
+									"attributeId": 402,
+									"value": "1 count"
+								}
+							]
+						},
+						{
+							"id": 382,
+							"identifier": "PetType",
+							"name": "Pet",
+							"groupName": "Standard",
+							"usage": "DESCRIPTIVE",
+							"searchable": true,
+							"facetable": true,
+							"value": [
+								{
+									"id": 9066,
+									"attributeId": 382,
+									"identifier": "dog",
+									"value": "Dog"
+								}
+							]
+						},
+						{
+							"id": 460,
+							"identifier": "SizeStandard",
+							"name": "Size Standard",
+							"groupName": "Standard",
+							"usage": "DESCRIPTIVE",
+							"searchable": true,
+							"facetable": true,
+							"value": [
+								{
+									"id": 481827,
+									"attributeId": 460,
+									"value": "2.8-oz"
+								}
+							]
+						},
+						{
+							"id": 526,
+							"identifier": "CountStandard",
+							"name": "Count Standard",
+							"groupName": "Standard",
+							"usage": "DESCRIPTIVE",
+							"value": [
+								{
+									"id": 439074,
+									"attributeId": 526,
+									"identifier": "1-count",
+									"value": "1",
+									"sequence": 1.0
+								}
+							]
+						},
+						{
+							"id": 532,
+							"identifier": "z-keywords",
+							"name": "z Keywords",
+							"groupName": "Hidden",
+							"usage": "DESCRIPTIVE",
+							"searchable": true,
+							"value": [
+								{
+									"id": 501060,
+									"attributeId": 532,
+									"value": "snack, reward, cleans teeth, oral health, dental health, mouth health, oral care, dental care, mouth care, oral hygiene, dental hygiene, mouth hygiene, poultry",
+									"sequence": 1.0
+								}
+							]
+						},
+						{
+							"id": 603,
+							"identifier": "AutoshipTax",
+							"name": "Autoship Tax",
+							"groupName": "Hidden",
+							"usage": "DESCRIPTIVE",
+							"value": [
+								{
+									"id": 628146,
+									"attributeId": 603,
+									"identifier": "vendor-funded",
+									"value": "Vendor Funded",
+									"sequence": 2.0
+								}
+							]
+						},
+						{
+							"id": 619,
+							"identifier": "PackageCount",
+							"name": "Package Count",
+							"groupName": "Standard",
+							"usage": "DESCRIPTIVE",
+							"facetable": true,
+							"value": [
+								{
+									"id": 657819,
+									"attributeId": 619,
+									"identifier": "Less-than-5",
+									"value": "Less than 5 count",
+									"sequence": 3.0
+								}
+							]
+						},
+						{
+							"id": 671,
+							"identifier": "ProductCategory",
+							"name": "Product Category",
+							"groupName": "Standard",
+							"usage": "DESCRIPTIVE",
+							"searchable": true,
+							"facetable": true,
+							"value": [
+								{
+									"id": 775205,
+									"attributeId": 671,
+									"identifier": "treats",
+									"value": "Treats",
+									"sequence": 20.0
+								}
+							]
+						},
+						{
+							"id": 464,
+							"identifier": "Season",
+							"name": "Season",
+							"groupName": "Standard",
+							"usage": "DESCRIPTIVE",
+							"value": [
+								{
+									"id": 729728,
+									"attributeId": 464,
+									"identifier": "n-a",
+									"value": "N/A",
+									"sequence": 21.0
+								}
+							]
+						},
+						{
+							"id": 447,
+							"identifier": "PackagingType",
+							"name": "Packaging Type",
+							"groupName": "Standard",
+							"usage": "DESCRIPTIVE",
+							"displayable": true,
+							"searchable": true,
+							"facetable": true,
+							"comparable": true,
+							"value": [
+								{
+									"id": 729744,
+									"attributeId": 447,
+									"identifier": "n-a",
+									"value": "N/A",
+									"sequence": 22.0
+								}
+							]
+						},
+						{
+							"id": 378,
+							"identifier": "Lifestage",
+							"name": "Lifestage",
+							"groupName": "Standard",
+							"usage": "DESCRIPTIVE",
+							"sequence": 5.0,
+							"displayable": true,
+							"searchable": true,
+							"facetable": true,
+							"comparable": true,
+							"value": [
+								{
+									"id": 9060,
+									"attributeId": 378,
+									"identifier": "adult",
+									"value": "Adult",
+									"sequence": 2.0
+								}
+							]
+						},
+						{
+							"id": 387,
+							"identifier": "BreedSize",
+							"name": "Breed Size",
+							"groupName": "Standard",
+							"usage": "DESCRIPTIVE",
+							"sequence": 6.0,
+							"displayable": true,
+							"searchable": true,
+							"facetable": true,
+							"comparable": true,
+							"value": [
+								{
+									"id": 13790,
+									"attributeId": 387,
+									"identifier": "small",
+									"value": "Small Breeds",
+									"sequence": 3.0
+								},
+								{
+									"id": 13791,
+									"attributeId": 387,
+									"identifier": "medium",
+									"value": "Medium Breeds",
+									"sequence": 4.0
+								},
+								{
+									"id": 13792,
+									"attributeId": 387,
+									"identifier": "large",
+									"value": "Large Breeds",
+									"sequence": 5.0
+								},
+								{
+									"id": 678846,
+									"attributeId": 387,
+									"identifier": "allbreeds",
+									"value": "All Breeds",
+									"sequence": 6.0
+								}
+							]
+						},
+						{
+							"id": 393,
+							"identifier": "FoodFlavor",
+							"name": "Flavor",
+							"groupName": "Standard",
+							"usage": "DESCRIPTIVE",
+							"sequence": 24.0,
+							"searchable": true,
+							"facetable": true,
+							"comparable": true,
+							"value": [
+								{
+									"id": 19896,
+									"attributeId": 393,
+									"identifier": "chicken",
+									"value": "Chicken",
+									"sequence": 7.0
+								}
+							]
+						},
+						{
+							"id": 379,
+							"identifier": "FoodForm",
+							"name": "Food Form",
+							"groupName": "Standard",
+							"usage": "DESCRIPTIVE",
+							"sequence": 25.0,
+							"displayable": true,
+							"searchable": true,
+							"facetable": true,
+							"comparable": true,
+							"value": [
+								{
+									"id": 20223,
+									"attributeId": 379,
+									"identifier": "treats",
+									"value": "Treats",
+									"sequence": 8.0
+								}
+							]
+						},
+						{
+							"id": 406,
+							"identifier": "Ingredients",
+							"name": "Ingredients",
+							"groupName": "Extended",
+							"usage": "DESCRIPTIVE",
+							"sequence": 28.0,
+							"displayable": true,
+							"searchable": true,
+							"comparable": true,
+							"value": [
+								{
+									"id": 79162,
+									"attributeId": 406,
+									"value": "Rice Flour, Wheat Starch, Sugar,  Chicken Meal, Water Sufficient for Processing, Chicken, Glycerin, Propylene Glycol, Powdered Cellulose, Poultry Fat (preserved with mixed tocopherols), Gelatin, Caramel Color, Monoglycerides, Phosphoric Acid, Potassium Sorbate (a preservative), Sodium Tripolyphosphate, Salt, Potassium Chloride, Vitamin A Supplement, Vitamin D3 Supplement, Vitamin E Supplement, Zinc Sulfate, Ferrous Sulfate, Niacin, Calcium Pantothenate, Riboflavin, Copper Sulfate, Pyridoxine Hydrochloride, Thiamine Mononitrate, Manganese Sulfate, Zinc Proteinate, Manganese Proteinate, Copper Proteinate, Calcium Iodate, Cobalt Carbonate, Folic Acid, Sodium Selenite, Biotin, Vitamin B12 Supplement.",
+									"sequence": 9.0
+								}
+							]
+						},
+						{
+							"id": 442,
+							"identifier": "ProductType",
+							"name": "Product Type",
+							"groupName": "Standard",
+							"usage": "DESCRIPTIVE",
+							"sequence": 70.0,
+							"searchable": true,
+							"facetable": true,
+							"value": [
+								{
+									"id": 203142,
+									"attributeId": 442,
+									"identifier": "dental-chew-dog-treats",
+									"value": "Dental Chew Dog Treats",
+									"sequence": 10.0
+								}
+							]
+						},
+						{
+							"id": 427,
+							"identifier": "Cautions",
+							"name": "Cautions",
+							"groupName": "Extended",
+							"usage": "DESCRIPTIVE",
+							"sequence": 70.0,
+							"displayable": true,
+							"value": [
+								{
+									"id": 306427,
+									"attributeId": 427,
+									"value": "Always supervise your pet while he is chewing a treat. Avoid giving the treat in a carpeted area or other location that can get stained. Remove treat immediately if you see that it has splintered or small fragments break off. These treats are not recommended for animals with digestive problems, allergies/sensitivity to one or more of the ingredients, animals with teeth issues or recovering from surgeries, or aggressive chewers.",
+									"sequence": 11.0
+								}
+							]
+						},
+						{
+							"id": 425,
+							"identifier": "CaloricContent",
+							"name": "Caloric Content",
+							"groupName": "Extended",
+							"usage": "DESCRIPTIVE",
+							"sequence": 70.0,
+							"displayable": true,
+							"value": [
+								{
+									"id": 652730,
+									"attributeId": 425,
+									"value": "3,054 kcal/kg, 244 kcal/treat",
+									"sequence": 12.0
+								}
+							]
+						},
+						{
+							"id": 430,
+							"identifier": "KeyBenefits",
+							"name": "KeyBenefits",
+							"groupName": "Extended",
+							"usage": "DESCRIPTIVE",
+							"sequence": 70.0,
+							"displayable": true,
+							"searchable": true,
+							"value": [
+								{
+									"id": 682678,
+									"attributeId": 430,
+									"value": "Chicken-flavored dental treats for dogs.",
+									"sequence": 13.0
+								},
+								{
+									"id": 682679,
+									"attributeId": 430,
+									"value": "Paw-fect for dogs of all breeds over 1 year of age.",
+									"sequence": 14.0
+								},
+								{
+									"id": 682680,
+									"attributeId": 430,
+									"value": "Crafted with a double layer to help control plaque and tartar.",
+									"sequence": 15.0
+								},
+								{
+									"id": 682681,
+									"attributeId": 430,
+									"value": "Formulated with a highly digestible rice recipe that’s packed with an irresistible chicken flavor.",
+									"sequence": 16.0
+								},
+								{
+									"id": 682682,
+									"attributeId": 430,
+									"value": "Made in the USA.",
+									"sequence": 17.0
+								}
+							]
+						},
+						{
+							"id": 381,
+							"identifier": "OtherFacet",
+							"name": "Other Facet",
+							"groupName": "Hidden",
+							"usage": "DESCRIPTIVE",
+							"sequence": 90.0,
+							"facetable": true,
+							"value": [
+								{
+									"id": 575547,
+									"attributeId": 381,
+									"identifier": "2019-bf-cw-treats",
+									"value": "Deals on Treats",
+									"sequence": 18.0
+								},
+								{
+									"id": 579528,
+									"attributeId": 381,
+									"identifier": "2019-bf-cw-dental-treats",
+									"value": "Deals on Dental Treats \u0026 Chews",
+									"sequence": 19.0
+								}
+							]
+						}
+					],
+					"userData": [
+						{
+							"key": "advertisedPrice",
+							"value": "2.58"
+						},
+						{
+							"key": "autoshipDiscountPct",
+							"value": "5%"
+						},
+						{
+							"key": "autoshipPrice",
+							"value": "2.45"
+						}
+					],
+					"inStock": true,
+					"parentPartNumber": "78840",
+					"autoshipPromotionId": 132,
+					"customizableFacet": "false",
+					"backorderable": true,
+					"mapEnforcedType": 1,
+					"catalogEntryPromotion": [
+						{
+							"id": "4356"
+						},
+						{
+							"id": "94",
+							"active": true
+						},
+						{
+							"id": "4543"
+						},
+						{
+							"id": "132",
+							"active": true
+						}
+					],
+					"newCatenttype": "ITEM"
+				},
+				"skuDto": {
+					"id": 106679,
+					"partNumber": "78841",
+					"definingAttributes": [
+						{
+							"identifier": "Count",
+							"name": "Count",
+							"value": "1 count"
+						}
+					],
+					"descriptiveAttributes": [
+						{
+							"identifier": "PetType",
+							"name": "Pet",
+							"value": "Dog"
+						},
+						{
+							"identifier": "SizeStandard",
+							"name": "Size Standard",
+							"value": "2.8-oz"
+						},
+						{
+							"identifier": "CountStandard",
+							"name": "Count Standard",
+							"value": "1"
+						},
+						{
+							"identifier": "z-keywords",
+							"name": "z Keywords",
+							"value": "snack, reward, cleans teeth, oral health, dental health, mouth health, oral care, dental care, mouth care, oral hygiene, dental hygiene, mouth hygiene, poultry"
+						},
+						{
+							"identifier": "AutoshipTax",
+							"name": "Autoship Tax",
+							"value": "Vendor Funded"
+						},
+						{
+							"identifier": "PackageCount",
+							"name": "Package Count",
+							"value": "Less than 5 count"
+						},
+						{
+							"identifier": "ProductCategory",
+							"name": "Product Category",
+							"value": "Treats"
+						},
+						{
+							"identifier": "Season",
+							"name": "Season",
+							"value": "N/A"
+						},
+						{
+							"identifier": "PackagingType",
+							"name": "Packaging Type",
+							"value": "N/A"
+						},
+						{
+							"identifier": "Lifestage",
+							"name": "Lifestage",
+							"value": "Adult"
+						},
+						{
+							"identifier": "BreedSize",
+							"name": "Breed Size",
+							"value": "Small Breeds"
+						},
+						{
+							"identifier": "FoodFlavor",
+							"name": "Flavor",
+							"value": "Chicken"
+						},
+						{
+							"identifier": "FoodForm",
+							"name": "Food Form",
+							"value": "Treats"
+						},
+						{
+							"identifier": "Ingredients",
+							"name": "Ingredients",
+							"value": "Rice Flour, Wheat Starch, Sugar,  Chicken Meal, Water Sufficient for Processing, Chicken, Glycerin, Propylene Glycol, Powdered Cellulose, Poultry Fat (preserved with mixed tocopherols), Gelatin, Caramel Color, Monoglycerides, Phosphoric Acid, Potassium Sorbate (a preservative), Sodium Tripolyphosphate, Salt, Potassium Chloride, Vitamin A Supplement, Vitamin D3 Supplement, Vitamin E Supplement, Zinc Sulfate, Ferrous Sulfate, Niacin, Calcium Pantothenate, Riboflavin, Copper Sulfate, Pyridoxine Hydrochloride, Thiamine Mononitrate, Manganese Sulfate, Zinc Proteinate, Manganese Proteinate, Copper Proteinate, Calcium Iodate, Cobalt Carbonate, Folic Acid, Sodium Selenite, Biotin, Vitamin B12 Supplement."
+						},
+						{
+							"identifier": "ProductType",
+							"name": "Product Type",
+							"value": "Dental Chew Dog Treats"
+						},
+						{
+							"identifier": "Cautions",
+							"name": "Cautions",
+							"value": "Always supervise your pet while he is chewing a treat. Avoid giving the treat in a carpeted area or other location that can get stained. Remove treat immediately if you see that it has splintered or small fragments break off. These treats are not recommended for animals with digestive problems, allergies/sensitivity to one or more of the ingredients, animals with teeth issues or recovering from surgeries, or aggressive chewers."
+						},
+						{
+							"identifier": "CaloricContent",
+							"name": "Caloric Content",
+							"value": "3,054 kcal/kg, 244 kcal/treat"
+						},
+						{
+							"identifier": "KeyBenefits",
+							"name": "KeyBenefits",
+							"value": "Chicken-flavored dental treats for dogs."
+						},
+						{
+							"identifier": "OtherFacet",
+							"name": "Other Facet",
+							"value": "Deals on Treats"
+						}
+					],
+					"displayableAttribute": [
+						{
+							"identifier": "PackagingType",
+							"name": "Packaging Type",
+							"value": "N/A"
+						},
+						{
+							"identifier": "Lifestage",
+							"name": "Lifestage",
+							"value": "Adult"
+						},
+						{
+							"identifier": "BreedSize",
+							"name": "Breed Size",
+							"value": "Small Breeds, Medium Breeds, Large Breeds, All Breeds"
+						},
+						{
+							"identifier": "FoodForm",
+							"name": "Food Form",
+							"value": "Treats"
+						}
+					],
+					"customizableAttributesByGroup": {
+					},
+					"isDropShip": false,
+					"name": "Ultra Chewy Double Treat Bones Dog Treat, 1 count",
+					"brand": "Ultra Chewy",
+					"authorName": "",
+					"publicationDate": "",
+					"shortDesc": "Double Treat Bones Dog Treat, 1 count",
+					"longDescMd": "Teach your sidekick a new trick with Ultra Chewy Double Treat Bones Chicken Flavor Dog Treats. These tasty dental treats for dogs are formulated with a highly digestible rice recipe that’s packed with an irresistible chicken flavor. They are crafted with a double layer to help control plaque and tartar for better oral health as your companion chews. These dental treats feature added vitamins and minerals that make them paw-fect for dogs of all breeds over one year of age.",
+					"thumbnailImageMosaicUri": "//img.chewy.com/is/image/catalog/78841_MAIN,1585663044",
+					"fullImage": "//img.chewy.com/is/image/catalog/78841_MAIN,1585663044",
+					"productId": 106678,
+					"canonicalCategoryId": 1463,
+					"pricing": {
+						"offerPrice": "2.58",
+						"advertisedPrice": "2.58",
+						"currency": "USD"
+					},
+					"rating": {
+						"rating": 4.194,
+						"ratingCount": 67
+					},
+					"mosaicThumbnailUri": "//img.chewy.com/is/image/catalog/78841_MAIN._AC_SS150_V1585663044_.jpg",
+					"dimension": {
+						"length": 0.0,
+						"width": 0.0,
+						"height": 0.0,
+						"sizeMeasure": "inch"
+					},
+					"weight": {
+						"weight": 0.175,
+						"weightMeasure": "pound"
+					},
+					"keyBenefits": [
+						"Chicken-flavored dental treats for dogs.",
+						"Paw-fect for dogs of all breeds over 1 year of age.",
+						"Crafted with a double layer to help control plaque and tartar.",
+						"Formulated with a highly digestible rice recipe that’s packed with an irresistible chicken flavor.",
+						"Made in the USA."
+					],
+					"featuredPromotions": {
+					},
+					"traits": [
+						"FOOD"
+					],
+					"isBuyable": true,
+					"inStock": true,
+					"autoshipAllowed": true,
+					"minShipDays": "",
+					"maxShipDays": "",
+					"deliveryMessageType": "",
+					"parentCatalogGroupIds": [
+						1463,
+						1539
+					],
+					"restrictedAvailability": [
+					]
+				}
+			},
+			{
+				"id": 680523,
+				"attributeId": 402,
+				"sequence": 1.0,
+				"value": "8 count",
+				"isSelected": true,
+				"isAvailable": true,
+				"sku": {
+					"id": 264676,
+					"type": "Item",
+					"partNumber": "238185",
+					"name": "Ultra Chewy Double Treat Bone Chicken Flavor Dog Treat",
+					"longDescription": "Teach your sidekick a new trick with Ultra Chewy Double Treat Bones Chicken Flavor Dog Treats. These tasty dental treats for dogs are formulated with a highly digestible rice recipe that’s packed with an irresistible chicken flavor. They are crafted with a double layer to help control plaque and tartar for better oral health as your companion chews. These dental treats feature added vitamins and minerals that make them paw-fect for dogs of all breeds over one year of age.",
+					"thumbnail": "//img.chewy.com/is/image/catalog/238185_MAIN,1611182786",
+					"fullImage": "//img.chewy.com/is/image/catalog/238185_MAIN,1611182786",
+					"price": [
+						{
+							"type": "MAP",
+							"value": "9.99"
+						},
+						{
+							"type": "OFFER",
+							"value": "9.99"
+						},
+						{
+							"type": "LIST",
+							"value": "9.99"
+						}
+					],
+					"manufacturer": "Ultra Chewy",
+					"manufacturerPartNumber": "8030",
+					"gtin": "877869008030",
+					"keywords": ",easy digest",
+					"parentCatalogEntryId": 106678,
+					"parentCatalogGroupId": [
+						1463,
+						1539
+					],
+					"published": true,
+					"buyable": true,
+					"startDate": 1596672000000,
+					"lastUpdate": 1611256920678,
+					"rating": 4.194,
+					"ratingCount": 67,
+					"packaging": {
+						"packagedWeight": 1.4,
+						"packagedLength": 2.4,
+						"packagedWidth": 7.75,
+						"packagedHeight": 10.5,
+						"weightMeasure": {
+							"id": "LBR",
+							"description": "pound"
+						},
+						"sizeMeasure": {
+							"id": "INH",
+							"description": "inch"
+						},
+						"nominalQuantity": 1.0,
+						"quantityMultiple": 1.0,
+						"quantityMeasure": {
+							"id": "EA",
+							"description": "each"
+						}
+					},
+					"attachmentasset": [
+						{
+							"id": 76807,
+							"usage": "FeedingInstructions",
+							"mimeType": "text/markdown",
+							"longDescription": "|Weight|Bones per Week|\r\n|---|---|\r\n|4- to 11-lbs|1-2|\r\n|11- to 20-lbs|2-3|\r\n|20- to 30-lbs|3-4|\r\n|30- to 42-lbs|4-5|\r\n|42- to 56-lbs|5-6|\r\n|Over 56-lbs|1 per 14-lbs body weight|\r\n\r\nFeed anytime as a treat or training reward. This treat should not replace your pet\u0027s regular meal. This treat may not be suitable for puppies, toy breeds, or any dog with a sensitive stomachs. Like any other treat, always supervise your dog while chewing. Remove and discard treat if your pet attempts to swallow large pieces. To avoid stains, do not feed over a carpeted area. Make sure to provide plenty of fresh water for your dog at all times. Regular veterinary visits are recommended to ensure your dog\u0027s good health."
+						},
+						{
+							"id": 195020,
+							"usage": "GuaranteedAnalysis",
+							"mimeType": "text/markdown",
+							"longDescription": "|Guaranteed Analysis||\r\n|---|---:|\r\n|Crude Protein|8.0% min|\r\n|Crude Fat|3.2% min|\r\n|Crude Fiber|3.5% max|\r\n|Moisture|20.0% max|\r\n|Phosphorus|0.35% min|\r\n|Potassium|0.27% min|\r\n|Vitamin A|2000 i.i/kg min|\r\n|Vitamin E|10 i.i/kg min|"
+						}
+					],
+					"attribute": [
+						{
+							"id": 402,
+							"identifier": "Count",
+							"name": "Count",
+							"groupName": "Defining",
+							"usage": "DEFINING",
+							"sequence": 18.0,
+							"displayable": true,
+							"searchable": true,
+							"value": [
+								{
+									"id": 680523,
+									"attributeId": 402,
+									"value": "8 count",
+									"sequence": 1.0
+								}
+							]
+						},
+						{
+							"id": 382,
+							"identifier": "PetType",
+							"name": "Pet",
+							"groupName": "Standard",
+							"usage": "DESCRIPTIVE",
+							"searchable": true,
+							"facetable": true,
+							"value": [
+								{
+									"id": 9066,
+									"attributeId": 382,
+									"identifier": "dog",
+									"value": "Dog"
+								}
+							]
+						},
+						{
+							"id": 532,
+							"identifier": "z-keywords",
+							"name": "z Keywords",
+							"groupName": "Hidden",
+							"usage": "DESCRIPTIVE",
+							"searchable": true,
+							"value": [
+								{
+									"id": 501060,
+									"attributeId": 532,
+									"value": "snack, reward, cleans teeth, oral health, dental health, mouth health, oral care, dental care, mouth care, oral hygiene, dental hygiene, mouth hygiene, poultry",
+									"sequence": 1.0
+								}
+							]
+						},
+						{
+							"id": 467,
+							"identifier": "OneTimeBuy",
+							"name": "One Time Buy",
+							"groupName": "Hidden",
+							"usage": "DESCRIPTIVE",
+							"value": [
+								{
+									"id": 374316,
+									"attributeId": 467,
+									"identifier": "false",
+									"value": "FALSE",
+									"sequence": 3.0
+								}
+							]
+						},
+						{
+							"id": 603,
+							"identifier": "AutoshipTax",
+							"name": "Autoship Tax",
+							"groupName": "Hidden",
+							"usage": "DESCRIPTIVE",
+							"value": [
+								{
+									"id": 628146,
+									"attributeId": 603,
+									"identifier": "vendor-funded",
+									"value": "Vendor Funded",
+									"sequence": 5.0
+								}
+							]
+						},
+						{
+							"id": 671,
+							"identifier": "ProductCategory",
+							"name": "Product Category",
+							"groupName": "Standard",
+							"usage": "DESCRIPTIVE",
+							"searchable": true,
+							"facetable": true,
+							"value": [
+								{
+									"id": 775205,
+									"attributeId": 671,
+									"identifier": "treats",
+									"value": "Treats",
+									"sequence": 20.0
+								}
+							]
+						},
+						{
+							"id": 464,
+							"identifier": "Season",
+							"name": "Season",
+							"groupName": "Standard",
+							"usage": "DESCRIPTIVE",
+							"value": [
+								{
+									"id": 729728,
+									"attributeId": 464,
+									"identifier": "n-a",
+									"value": "N/A",
+									"sequence": 21.0
+								}
+							]
+						},
+						{
+							"id": 447,
+							"identifier": "PackagingType",
+							"name": "Packaging Type",
+							"groupName": "Standard",
+							"usage": "DESCRIPTIVE",
+							"displayable": true,
+							"searchable": true,
+							"facetable": true,
+							"comparable": true,
+							"value": [
+								{
+									"id": 729744,
+									"attributeId": 447,
+									"identifier": "n-a",
+									"value": "N/A",
+									"sequence": 22.0
+								}
+							]
+						},
+						{
+							"id": 378,
+							"identifier": "Lifestage",
+							"name": "Lifestage",
+							"groupName": "Standard",
+							"usage": "DESCRIPTIVE",
+							"sequence": 5.0,
+							"displayable": true,
+							"searchable": true,
+							"facetable": true,
+							"comparable": true,
+							"value": [
+								{
+									"id": 9060,
+									"attributeId": 378,
+									"identifier": "adult",
+									"value": "Adult",
+									"sequence": 2.0
+								}
+							]
+						},
+						{
+							"id": 387,
+							"identifier": "BreedSize",
+							"name": "Breed Size",
+							"groupName": "Standard",
+							"usage": "DESCRIPTIVE",
+							"sequence": 6.0,
+							"displayable": true,
+							"searchable": true,
+							"facetable": true,
+							"comparable": true,
+							"value": [
+								{
+									"id": 13790,
+									"attributeId": 387,
+									"identifier": "small",
+									"value": "Small Breeds",
+									"sequence": 3.0
+								},
+								{
+									"id": 13791,
+									"attributeId": 387,
+									"identifier": "medium",
+									"value": "Medium Breeds",
+									"sequence": 4.0
+								},
+								{
+									"id": 13792,
+									"attributeId": 387,
+									"identifier": "large",
+									"value": "Large Breeds",
+									"sequence": 5.0
+								}
+							]
+						},
+						{
+							"id": 393,
+							"identifier": "FoodFlavor",
+							"name": "Flavor",
+							"groupName": "Standard",
+							"usage": "DESCRIPTIVE",
+							"sequence": 24.0,
+							"searchable": true,
+							"facetable": true,
+							"comparable": true,
+							"value": [
+								{
+									"id": 19896,
+									"attributeId": 393,
+									"identifier": "chicken",
+									"value": "Chicken",
+									"sequence": 7.0
+								}
+							]
+						},
+						{
+							"id": 379,
+							"identifier": "FoodForm",
+							"name": "Food Form",
+							"groupName": "Standard",
+							"usage": "DESCRIPTIVE",
+							"sequence": 25.0,
+							"displayable": true,
+							"searchable": true,
+							"facetable": true,
+							"comparable": true,
+							"value": [
+								{
+									"id": 20223,
+									"attributeId": 379,
+									"identifier": "treats",
+									"value": "Treats",
+									"sequence": 8.0
+								}
+							]
+						},
+						{
+							"id": 406,
+							"identifier": "Ingredients",
+							"name": "Ingredients",
+							"groupName": "Extended",
+							"usage": "DESCRIPTIVE",
+							"sequence": 28.0,
+							"displayable": true,
+							"searchable": true,
+							"comparable": true,
+							"value": [
+								{
+									"id": 79162,
+									"attributeId": 406,
+									"value": "Rice Flour, Wheat Starch, Sugar,  Chicken Meal, Water Sufficient for Processing, Chicken, Glycerin, Propylene Glycol, Powdered Cellulose, Poultry Fat (preserved with mixed tocopherols), Gelatin, Caramel Color, Monoglycerides, Phosphoric Acid, Potassium Sorbate (a preservative), Sodium Tripolyphosphate, Salt, Potassium Chloride, Vitamin A Supplement, Vitamin D3 Supplement, Vitamin E Supplement, Zinc Sulfate, Ferrous Sulfate, Niacin, Calcium Pantothenate, Riboflavin, Copper Sulfate, Pyridoxine Hydrochloride, Thiamine Mononitrate, Manganese Sulfate, Zinc Proteinate, Manganese Proteinate, Copper Proteinate, Calcium Iodate, Cobalt Carbonate, Folic Acid, Sodium Selenite, Biotin, Vitamin B12 Supplement.",
+									"sequence": 9.0
+								}
+							]
+						},
+						{
+							"id": 442,
+							"identifier": "ProductType",
+							"name": "Product Type",
+							"groupName": "Standard",
+							"usage": "DESCRIPTIVE",
+							"sequence": 70.0,
+							"searchable": true,
+							"facetable": true,
+							"value": [
+								{
+									"id": 203142,
+									"attributeId": 442,
+									"identifier": "dental-chew-dog-treats",
+									"value": "Dental Chew Dog Treats",
+									"sequence": 10.0
+								}
+							]
+						},
+						{
+							"id": 427,
+							"identifier": "Cautions",
+							"name": "Cautions",
+							"groupName": "Extended",
+							"usage": "DESCRIPTIVE",
+							"sequence": 70.0,
+							"displayable": true,
+							"value": [
+								{
+									"id": 306427,
+									"attributeId": 427,
+									"value": "Always supervise your pet while he is chewing a treat. Avoid giving the treat in a carpeted area or other location that can get stained. Remove treat immediately if you see that it has splintered or small fragments break off. These treats are not recommended for animals with digestive problems, allergies/sensitivity to one or more of the ingredients, animals with teeth issues or recovering from surgeries, or aggressive chewers.",
+									"sequence": 11.0
+								}
+							]
+						},
+						{
+							"id": 425,
+							"identifier": "CaloricContent",
+							"name": "Caloric Content",
+							"groupName": "Extended",
+							"usage": "DESCRIPTIVE",
+							"sequence": 70.0,
+							"displayable": true,
+							"value": [
+								{
+									"id": 652730,
+									"attributeId": 425,
+									"value": "3,054 kcal/kg, 244 kcal/treat",
+									"sequence": 12.0
+								}
+							]
+						},
+						{
+							"id": 430,
+							"identifier": "KeyBenefits",
+							"name": "KeyBenefits",
+							"groupName": "Extended",
+							"usage": "DESCRIPTIVE",
+							"sequence": 70.0,
+							"displayable": true,
+							"searchable": true,
+							"value": [
+								{
+									"id": 682678,
+									"attributeId": 430,
+									"value": "Chicken-flavored dental treats for dogs.",
+									"sequence": 13.0
+								},
+								{
+									"id": 682679,
+									"attributeId": 430,
+									"value": "Paw-fect for dogs of all breeds over 1 year of age.",
+									"sequence": 14.0
+								},
+								{
+									"id": 682680,
+									"attributeId": 430,
+									"value": "Crafted with a double layer to help control plaque and tartar.",
+									"sequence": 15.0
+								},
+								{
+									"id": 682681,
+									"attributeId": 430,
+									"value": "Formulated with a highly digestible rice recipe that’s packed with an irresistible chicken flavor.",
+									"sequence": 16.0
+								},
+								{
+									"id": 682682,
+									"attributeId": 430,
+									"value": "Made in the USA.",
+									"sequence": 17.0
+								}
+							]
+						},
+						{
+							"id": 381,
+							"identifier": "OtherFacet",
+							"name": "Other Facet",
+							"groupName": "Hidden",
+							"usage": "DESCRIPTIVE",
+							"sequence": 90.0,
+							"facetable": true,
+							"value": [
+								{
+									"id": 575547,
+									"attributeId": 381,
+									"identifier": "2019-bf-cw-treats",
+									"value": "Deals on Treats",
+									"sequence": 18.0
+								},
+								{
+									"id": 579528,
+									"attributeId": 381,
+									"identifier": "2019-bf-cw-dental-treats",
+									"value": "Deals on Dental Treats \u0026 Chews",
+									"sequence": 19.0
+								}
+							]
+						},
+						{
+							"id": 540,
+							"identifier": "z-content-specialist",
+							"name": "z Content Specialist",
+							"groupName": "Hidden",
+							"usage": "DESCRIPTIVE",
+							"sequence": 100.0,
+							"value": [
+								{
+									"id": 519277,
+									"attributeId": 540,
+									"identifier": "j-howe",
+									"value": "J.HOWE",
+									"sequence": 4.0
+								}
+							]
+						}
+					],
+					"userData": [
+						{
+							"key": "advertisedPrice",
+							"value": "9.99"
+						},
+						{
+							"key": "listSavings",
+							"value": "0.00"
+						},
+						{
+							"key": "listSavingsPct",
+							"value": "0"
+						},
+						{
+							"key": "autoshipDiscountPct",
+							"value": "5%"
+						},
+						{
+							"key": "autoshipPrice",
+							"value": "9.49"
+						}
+					],
+					"inStock": true,
+					"parentPartNumber": "78840",
+					"autoshipPromotionId": 132,
+					"customizableFacet": "false",
+					"backorderable": true,
+					"mapEnforcedType": 1,
+					"catalogEntryPromotion": [
+						{
+							"id": "94",
+							"active": true
+						},
+						{
+							"id": "132",
+							"active": true
+						}
+					],
+					"newCatenttype": "ITEM"
+				},
+				"skuDto": {
+					"id": 264676,
+					"partNumber": "238185",
+					"definingAttributes": [
+						{
+							"identifier": "Count",
+							"name": "Count",
+							"value": "8 count"
+						}
+					],
+					"descriptiveAttributes": [
+						{
+							"identifier": "PetType",
+							"name": "Pet",
+							"value": "Dog"
+						},
+						{
+							"identifier": "z-keywords",
+							"name": "z Keywords",
+							"value": "snack, reward, cleans teeth, oral health, dental health, mouth health, oral care, dental care, mouth care, oral hygiene, dental hygiene, mouth hygiene, poultry"
+						},
+						{
+							"identifier": "OneTimeBuy",
+							"name": "One Time Buy",
+							"value": "FALSE"
+						},
+						{
+							"identifier": "AutoshipTax",
+							"name": "Autoship Tax",
+							"value": "Vendor Funded"
+						},
+						{
+							"identifier": "ProductCategory",
+							"name": "Product Category",
+							"value": "Treats"
+						},
+						{
+							"identifier": "Season",
+							"name": "Season",
+							"value": "N/A"
+						},
+						{
+							"identifier": "PackagingType",
+							"name": "Packaging Type",
+							"value": "N/A"
+						},
+						{
+							"identifier": "Lifestage",
+							"name": "Lifestage",
+							"value": "Adult"
+						},
+						{
+							"identifier": "BreedSize",
+							"name": "Breed Size",
+							"value": "Small Breeds"
+						},
+						{
+							"identifier": "FoodFlavor",
+							"name": "Flavor",
+							"value": "Chicken"
+						},
+						{
+							"identifier": "FoodForm",
+							"name": "Food Form",
+							"value": "Treats"
+						},
+						{
+							"identifier": "Ingredients",
+							"name": "Ingredients",
+							"value": "Rice Flour, Wheat Starch, Sugar,  Chicken Meal, Water Sufficient for Processing, Chicken, Glycerin, Propylene Glycol, Powdered Cellulose, Poultry Fat (preserved with mixed tocopherols), Gelatin, Caramel Color, Monoglycerides, Phosphoric Acid, Potassium Sorbate (a preservative), Sodium Tripolyphosphate, Salt, Potassium Chloride, Vitamin A Supplement, Vitamin D3 Supplement, Vitamin E Supplement, Zinc Sulfate, Ferrous Sulfate, Niacin, Calcium Pantothenate, Riboflavin, Copper Sulfate, Pyridoxine Hydrochloride, Thiamine Mononitrate, Manganese Sulfate, Zinc Proteinate, Manganese Proteinate, Copper Proteinate, Calcium Iodate, Cobalt Carbonate, Folic Acid, Sodium Selenite, Biotin, Vitamin B12 Supplement."
+						},
+						{
+							"identifier": "ProductType",
+							"name": "Product Type",
+							"value": "Dental Chew Dog Treats"
+						},
+						{
+							"identifier": "Cautions",
+							"name": "Cautions",
+							"value": "Always supervise your pet while he is chewing a treat. Avoid giving the treat in a carpeted area or other location that can get stained. Remove treat immediately if you see that it has splintered or small fragments break off. These treats are not recommended for animals with digestive problems, allergies/sensitivity to one or more of the ingredients, animals with teeth issues or recovering from surgeries, or aggressive chewers."
+						},
+						{
+							"identifier": "CaloricContent",
+							"name": "Caloric Content",
+							"value": "3,054 kcal/kg, 244 kcal/treat"
+						},
+						{
+							"identifier": "KeyBenefits",
+							"name": "KeyBenefits",
+							"value": "Chicken-flavored dental treats for dogs."
+						},
+						{
+							"identifier": "OtherFacet",
+							"name": "Other Facet",
+							"value": "Deals on Treats"
+						},
+						{
+							"identifier": "z-content-specialist",
+							"name": "z Content Specialist",
+							"value": "J.HOWE"
+						}
+					],
+					"displayableAttribute": [
+						{
+							"identifier": "PackagingType",
+							"name": "Packaging Type",
+							"value": "N/A"
+						},
+						{
+							"identifier": "Lifestage",
+							"name": "Lifestage",
+							"value": "Adult"
+						},
+						{
+							"identifier": "BreedSize",
+							"name": "Breed Size",
+							"value": "Small Breeds, Medium Breeds, Large Breeds"
+						},
+						{
+							"identifier": "FoodForm",
+							"name": "Food Form",
+							"value": "Treats"
+						}
+					],
+					"customizableAttributesByGroup": {
+					},
+					"isDropShip": false,
+					"name": "Ultra Chewy Double Treat Bone Chicken Flavor Dog Treat",
+					"brand": "Ultra Chewy",
+					"authorName": "",
+					"publicationDate": "",
+					"shortDesc": "Double Treat Bone Chicken Flavor Dog Treat",
+					"longDescMd": "Teach your sidekick a new trick with Ultra Chewy Double Treat Bones Chicken Flavor Dog Treats. These tasty dental treats for dogs are formulated with a highly digestible rice recipe that’s packed with an irresistible chicken flavor. They are crafted with a double layer to help control plaque and tartar for better oral health as your companion chews. These dental treats feature added vitamins and minerals that make them paw-fect for dogs of all breeds over one year of age.",
+					"thumbnailImageMosaicUri": "//img.chewy.com/is/image/catalog/238185_MAIN,1611182786",
+					"fullImage": "//img.chewy.com/is/image/catalog/238185_MAIN,1611182786",
+					"productId": 106678,
+					"canonicalCategoryId": 1463,
+					"pricing": {
+						"offerPrice": "9.99",
+						"advertisedPrice": "9.99",
+						"currency": "USD"
+					},
+					"rating": {
+						"rating": 4.194,
+						"ratingCount": 67
+					},
+					"mosaicThumbnailUri": "//img.chewy.com/is/image/catalog/238185_MAIN._AC_SS150_V1611182786_.jpg",
+					"dimension": {
+						"length": 0.0,
+						"width": 0.0,
+						"height": 0.0,
+						"sizeMeasure": "inch"
+					},
+					"weight": {
+						"weight": 0.0,
+						"weightMeasure": "pound"
+					},
+					"keyBenefits": [
+						"Chicken-flavored dental treats for dogs.",
+						"Paw-fect for dogs of all breeds over 1 year of age.",
+						"Crafted with a double layer to help control plaque and tartar.",
+						"Formulated with a highly digestible rice recipe that’s packed with an irresistible chicken flavor.",
+						"Made in the USA."
+					],
+					"featuredPromotions": {
+					},
+					"traits": [
+						"FOOD"
+					],
+					"isBuyable": true,
+					"inStock": true,
+					"autoshipAllowed": true,
+					"minShipDays": "",
+					"maxShipDays": "",
+					"deliveryMessageType": "",
+					"parentCatalogGroupIds": [
+						1463,
+						1539
+					],
+					"restrictedAvailability": [
+					]
+				}
+			}
+		]
+	}
+]

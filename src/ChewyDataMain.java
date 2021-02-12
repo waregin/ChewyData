@@ -27,14 +27,14 @@ public class ChewyDataMain {
 
 		for (String productUrl : productUrlList) {
 			Document document = Jsoup.connect(productUrl).get();
-			if (DOGS && !isForBigDogs(document)) {
-				continue;
-			}
 
 			Element options = document.getElementById("vue-portal__sfw-attribute-buttons");
 			if (options != null) {
 				generateProductsFromOptions(productUrl, options);
 			} else {
+				if (DOGS && !isForBigDogs(document)) {
+					continue;
+				}
 				System.out.println(generateProduct(productUrl, document));
 			}
 		}
