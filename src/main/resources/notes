@@ -1,0 +1,90 @@
+--verify Chewy.com page
+<title>REDBARN Naturals Braided Bully Sticks 12" Dog Treat, 1 count - Chewy.com</title>
+
+--get brand name, item name, sku, image, price for all variations
+inside div with id='sku-selector', there is a div with id='vue-portal__sfw-attribute-buttons' and data-attributes
+inside data-attributes array, there is attributeValues collection
+inside attributeValues, there will be objects
+in each object, take value - that will be the name of the selection (e.g., "value":"1count")
+in each object, there is a sku - another collection
+inside skuDto, take id, name, fullImage
+also inside sku, grab pricing -> advertisedPrice
+
+with all the data I don't want removed:
+<div id="sku-selector">
+    <div id="vue-portal__sfw-attribute-buttons"
+            data-attributes="[
+				{
+					"attributeValues":		
+					[
+						{
+							"value":"1count",
+							"skuDto":
+								{
+									"id":126420,
+									"name":"Redbarn Naturals Braided Bully Sticks 12\" Dog Treat, 1 count",
+									"brand":"Redbarn",
+									"fullImage":"//img.chewy.com/is/catalog/98863_MAIN,1475094815",
+									"pricing":
+										{
+											"advertisedPrice":"14.89"
+										}
+								}
+						},
+						{
+							"value":"Case of 25",
+							"skuDto":
+								{
+									"id":126421,
+									"name":"Redbarn Naturals Braided Bully Sticks 12\" Dog Treats, Case of 25",
+									"brand":"Redbarn",
+									"fullImage":"//img.chewy.com/is/catalog/98864_MAIN,1475095135",
+									"pricing":
+										{
+											"advertisedPrice":"189.99"
+										}
+								}
+						}
+					]
+				}
+			]"
+			category="variant-1543">
+	</div>
+</div>
+
+https://www.chewy.com/merrick-fresh-kisses-infused-coconut/dp/295237|Merrick|Fresh Kisses Double-Brush Coconut + Botanical Oils Infused Large Dental Dog Treats|295237|//img.chewy.com/is/image/catalog/268809_MAIN._AC_SL400_V1611093740_.jpg|$32.99|22 count||
+https://www.chewy.com/merrick-fresh-kisses-double-brush/dp/295229|Merrick|Fresh Kisses Double-Brush Mint Breath Strip Infused Large Dental Dog Treats|295229|//img.chewy.com/is/image/catalog/268801_MAIN._AC_SL400_V1611093684_.jpg|$32.99|22 count||
+https://www.chewy.com/ultra-chewy-double-treat-bones-dog/dp/264676|Ultra Chewy|Double Treat Bones Chicken Flavor Dog Treat|264676|//img.chewy.com/is/image/catalog/238185_MAIN._AC_SL400_V1611182786_.jpg|$9.99|8 count|,|name
+https://www.chewy.com/zesty-paws-hemp-elements-allergy/dp/250975|Zesty Paws|Allergy & Immune Teeth Cleaning & Seasonal Allergies Dental Dog Treats|250975|//img.chewy.com/is/image/catalog/224446_MAIN._AC_SL400_V1612500377_.jpg|$12.97|12-oz bag, Count Varies|12-oz|ier
+https://www.chewy.com/zesty-paws-hemp-elements-allergy/dp/250976|Zesty Paws|Allergy & Immune Teeth Cleaning & Seasonal Allergies Dental Dog Treats|250976|//img.chewy.com/is/image/catalog/224447_MAIN._AC_SL400_V1612506407_.jpg|$21.97|25-oz bag, Count Varies|25-oz|ier
+https://www.chewy.com/arm-hammer-dental-ringers-fresh/dp/234678|Arm & Hammer Dental|Ringers Fresh Breath Rawhide-Free Mint Flavored Dental Dog Treats|234678|//img.chewy.com/is/image/catalog/208083_MAIN._AC_SL400_V1573580076_.jpg|$34.99|32 count||32
+https://www.chewy.com/arm-hammer-dental-nubbies-tartar/dp/145308|Arm & Hammer Dental|Nubbies Tartar Control Peanut Butter Flavored Dental Dog Treats|145308|//img.chewy.com/is/image/catalog/118099_MAIN._AC_SL400_V1553539058_.jpg|$5.99|20 count||20
+https://www.chewy.com/arm-hammer-dental-nubbies-tartar/dp/234676|Arm & Hammer Dental|Nubbies Tartar Control Peanut Butter Flavored Dental Dog Treats|234676|//img.chewy.com/is/image/catalog/208081_MAIN._AC_SL400_V1573580054_.jpg|$28.54|139 count|e|139
+https://www.chewy.com/vetoquinol-enzadent-oral-care-large/dp/187811|Vetoquinol|Enzadent Oral Care Dental Dog Treats|187811|//img.chewy.com/is/image/catalog/161089_MAIN._AC_SL400_V1551968827_.jpg|$18.29|Large Breeds, 30 count|fier|30
+https://www.chewy.com/vetoquinol-enzadent-oral-care-large/dp/187812|Vetoquinol|Enzadent Oral Care Dental Dog Treats|187812|//img.chewy.com/is/image/catalog/161090_MAIN._AC_SL400_V1551968539_.jpg|$22.00|X-Large Breeds, 30 count|tifier|30
+https://www.chewy.com/arm-hammer-dental-smilies-tartar/dp/234677|Arm & Hammer Dental|Smilies Tartar Control Rawhide-Free Mint Flavored Dental Dog Treats|234677|//img.chewy.com/is/image/catalog/208082_MAIN._AC_SL400_V1595514955_.jpg|$29.99|62 count||62
+https://www.chewy.com/vetoquinol-dentahex-oral-care-petite/dp/187806|Vetoquinol|Dentahex Oral Care Dental Dog Treats|187806|//img.chewy.com/is/image/catalog/161084_MAIN._AC_SL400_V1551801805_.jpg|$19.66|Large Breeds, 30 count|fier|30
+https://www.chewy.com/vetoquinol-dentahex-oral-care-petite/dp/187807|Vetoquinol|Dentahex Oral Care Dental Dog Treats|187807|//img.chewy.com/is/image/catalog/161085_MAIN._AC_SL400_V1551891727_.jpg|$27.28|X-Large Breeds, 30 count|tifier|30
+https://www.chewy.com/n-bone-quado-interactive-bacon/dp/201035|N-Bone|Quado Interactive Bacon Flavored Dental Dog Treats|201035|//img.chewy.com/is/image/catalog/174342_MAIN._AC_SL400_V1565887974_.jpg|$6.49|Medium, 1 count|Medium|1
+https://www.chewy.com/n-bone-quado-interactive-bacon/dp/201036|N-Bone|Quado Interactive Bacon Flavored Dental Dog Treats|201036|//img.chewy.com/is/image/catalog/174343_MAIN._AC_SL400_V1565888038_.jpg|$14.99|Large, 1 count|Large|1
+https://www.chewy.com/dr-mercola-dental-chew-bone-rawhide/dp/206469|Dr. Mercola|Dental Chew Bone Rawhide-Free Dental Dog Treats|206469|//img.chewy.com/is/image/catalog/179796_Main._AC_SL400_V1561647418_.jpg|$24.97|Large, 12 count|Large|12
+https://www.chewy.com/crumps-naturals-plaque-busters-bacon/dp/259539|Crumps' Naturals|Plaque Busters Bacon Flavored Dental Dog Treats|259539|//img.chewy.com/is/image/catalog/233032_MAIN._AC_SL400_V1588687299_.jpg|$6.99|3.2-oz bag, 8 count|3.2-oz|:
+https://www.chewy.com/crumps-naturals-plaque-busters-bacon/dp/259540|Crumps' Naturals|Plaque Busters Bacon Flavored Dental Dog Treats|259540|//img.chewy.com/is/image/catalog/233033_MAIN._AC_SL400_V1588686664_.jpg|$9.99|4.9-oz bag, 8 count|4.9-oz|:
+https://www.chewy.com/crumps-naturals-plaque-busters-oyster/dp/259536|Crumps' Naturals|Plaque Busters Oyster Flavored Dental Dog Treats|259536|//img.chewy.com/is/image/catalog/233029_MAIN._AC_SL400_V1588687307_.jpg|$6.99|3.2-oz bag, 8 count|3.2-oz|:
+https://www.chewy.com/crumps-naturals-plaque-busters-oyster/dp/259537|Crumps' Naturals|Plaque Busters Oyster Flavored Dental Dog Treats|259537|//img.chewy.com/is/image/catalog/233030_MAIN._AC_SL400_V1588686430_.jpg|$9.99|4.9-oz bag, 8 count|4.9-oz|:
+https://www.chewy.com/ultra-chewy-double-treat-bone-liver/dp/264681|Ultra Chewy|Double Treat Bone Liver Flavor Dog Treats|264681|//img.chewy.com/is/image/catalog/238190_MAIN._AC_SL400_V1611182537_.jpg|$1.49|1 count|,|name
+https://www.chewy.com/ultra-chewy-double-treat-bone-liver/dp/264682|Ultra Chewy|Double Treat Bone Liver Flavor Dog Treats|264682|//img.chewy.com/is/image/catalog/238191_MAIN._AC_SL400_V1611186192_.jpg|$9.99|8 count|,|name
+https://www.chewy.com/ultra-chewy-double-treat-bone-bacon/dp/264687|Ultra Chewy|Double Treat Bone Bacon & Cheese Flavor Dog Treats|264687|//img.chewy.com/is/image/catalog/238196_MAIN._AC_SL400_V1611184073_.jpg|$1.49|1 count|,|name
+https://www.chewy.com/ultra-chewy-double-treat-bone-bacon/dp/264688|Ultra Chewy|Double Treat Bone Bacon & Cheese Flavor Dog Treats|264688|//img.chewy.com/is/image/catalog/238197_MAIN._AC_SL400_V1611181309_.jpg|$9.99|8 count|,|name
+https://www.chewy.com/n-bone-quada-bbq-flavored-interactive/dp/201039|N-Bone|Quada BBQ Flavored Interactive Dental Dog Treats|201039|//img.chewy.com/is/image/catalog/174346_MAIN._AC_SL400_V1565887985_.jpg|$6.49|Medium, 1 count|Medium|1
+https://www.chewy.com/n-bone-quada-bbq-flavored-interactive/dp/201040|N-Bone|Quada BBQ Flavored Interactive Dental Dog Treats|201040|//img.chewy.com/is/image/catalog/174347_MAIN._AC_SL400_V1565887674_.jpg|$14.99|Large, 1 count|Large|1
+https://www.chewy.com/ultra-chewy-double-treat-bone-greek/dp/264678|Ultra Chewy|Double Treat Bone Greek Yogurt Flavor Dog Treat|264678|//img.chewy.com/is/image/catalog/238187_MAIN._AC_SL400_V1611181322_.jpg|$1.49|1 count|,|name
+https://www.chewy.com/ultra-chewy-double-treat-bone-greek/dp/264679|Ultra Chewy|Double Treat Bone Greek Yogurt Flavor Dog Treat|264679|//img.chewy.com/is/image/catalog/238188_MAIN._AC_SL400_V1611181042_.jpg|$9.99|8 count|4-in|name
+https://www.chewy.com/bluestem-oral-care-rawhide-dental/dp/233925|Bluestem|Oral Care Rawhide Dental Chews Dog Treats|233925|//img.chewy.com/is/image/catalog/207327_main._AC_SL400_V1572275292_.jpg|$16.99|Medium||30
+https://www.chewy.com/bluestem-oral-care-rawhide-dental/dp/233926|Bluestem|Oral Care Rawhide Dental Chews Dog Treats|233926|//img.chewy.com/is/image/catalog/207328_main._AC_SL400_V1572275294_.jpg|$22.99|Large|name|30
+https://www.chewy.com/ultra-chewy-double-treat-bone-peanut/dp/264684|Ultra Chewy|Double Treat Bone Peanut Butter Flavor Dog Treats|264684|//img.chewy.com/is/image/catalog/238193_MAIN._AC_SL400_V1611183715_.jpg|$1.49|1 count|4-in|name
+https://www.chewy.com/ultra-chewy-double-treat-bone-peanut/dp/264685|Ultra Chewy|Double Treat Bone Peanut Butter Flavor Dog Treats|264685|//img.chewy.com/is/image/catalog/238194_MAIN._AC_SL400_V1611186296_.jpg|$9.99|8 count|,|name
+https://www.chewy.com/nylabone-primal-instinct-grain-free/dp/192522|Nylabone|Primal Instinct Grain-Free Chicken Recipe Large Dental Bones Dog Treats|192522|//img.chewy.com/is/image/catalog/165818_MAIN._AC_SL400_V1558705729_.jpg|$8.99|2 count|Large|2
+https://www.chewy.com/nylabone-primal-instinct-grain-free/dp/192523|Nylabone|Primal Instinct Grain-Free Chicken Recipe Large Dental Bones Dog Treats|192523|//img.chewy.com/is/image/catalog/165819_MAIN._AC_SL400_V1558705712_.jpg|$15.99|6 count|Large|6
+https://www.chewy.com/nylabone-primal-instinct-grain-free/dp/192528|Nylabone|Primal Instinct Grain-Free Large Dental Bones Dog Treats|192528|//img.chewy.com/is/image/catalog/165824_MAIN._AC_SL400_V1558705945_.jpg|$8.99|2 count|Large|2
+https://www.chewy.com/nylabone-primal-instinct-grain-free/dp/192529|Nylabone|Primal Instinct Grain-Free Large Dental Bones Dog Treats|192529|//img.chewy.com/is/image/catalog/165825_MAIN._AC_SL400_V1581619977_.jpg|$15.99|6 count|Large|6
