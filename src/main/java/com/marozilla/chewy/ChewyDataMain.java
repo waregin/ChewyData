@@ -1,40 +1,49 @@
 package com.marozilla.chewy;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.NumberFormat;
+import java.util.*;
+
 public class ChewyDataMain {
 	private static final boolean DOGS = true;
-	private static final String SIZE_KEY = "\"identifier\":\"SizeStandard\",\"name\":\"Size Standard\",\"value\":\"";
-	private static final String COUNT_KEY = "\"identifier\":\"CountStandard\",\"name\":\"Count Standard\",\"value\":\"";
-	private static Set<String> skus = new HashSet<>();
+	private static final Set<String> skus = new HashSet<>();
+	private static final Gson gson = new Gson();
 
 	public static void main(String[] args) throws IOException {
 		Document primaryPage = Jsoup.connect("https://www.chewy.com/b/dental-chews-1463").get();
 
-		List<String> pageUrlList = generatePageUrlList(primaryPage);
+		Set<String> pageUrlList = generatePageUrlList(primaryPage);
 
-		List<String> productUrlList = findProductUrls(primaryPage);
+		Set<String> productUrlList = findProductUrls(primaryPage);
 		for (String pageUrl : pageUrlList) {
 			productUrlList.addAll(findProductUrls(Jsoup.connect(pageUrl).get()));
 		}
 
 		for (String productUrl : productUrlList) {
 			Document document = Jsoup.connect(productUrl).get();
+//			String[] splits = productUrl.split("/");
+//			String fileName = splits[splits.length - 1] + ".html";
+//			FileWriter fileWriter = new FileWriter(fileName);
+//			fileWriter.write(document.toString());
+//			fileWriter.close();
 
 			Element options = document.getElementById("vue-portal__sfw-attribute-buttons");
 			if (options != null) {
 				generateProductsFromOptions(productUrl, options);
 			} else {
-				if (DOGS && !isForBigDogs(document)) {
+				if (DOGS && isNotForBigDogs(document)) {
 					continue;
 				}
 				System.out.println(generateProduct(productUrl, document));
@@ -42,8 +51,8 @@ public class ChewyDataMain {
 		}
 	}
 
-	private static List<String> generatePageUrlList(Document primaryPage) {
-		List<String> pageUrlList = new ArrayList<>();
+	private static Set<String> generatePageUrlList(Document primaryPage) {
+		Set<String> pageUrlList = new HashSet<>();
 		Elements paginationItems = primaryPage.getElementsByAttributeValue("class",
 				"pagination_selection cw-pagination__item");
 		if (paginationItems.size() > 1) {
@@ -61,46 +70,41 @@ public class ChewyDataMain {
 	private static void generateProductsFromOptions(String productUrl, Element options) throws IOException {
 		String baseUrl = productUrl.substring(0, productUrl.lastIndexOf("/") + 1);
 		String attributes = options.attr("data-attributes");
-		attributes = attributes.substring(attributes.indexOf("attributeValues"));
-		while (attributes.indexOf("skuDto") != -1) {
-			String skuDto = "skuDto\":{\"id\":";
-			attributes = attributes.substring(attributes.indexOf(skuDto) + skuDto.length());
+		Type founderListType = new TypeToken<ArrayList<ChewyProductAttributes>>(){}.getType();
+		List<ChewyProductAttributes> attributesList = gson.fromJson(attributes, founderListType);
+		for (ChewyProductAttributes chewyProductAttributes : attributesList) {
+			for (AttributeValue attributeValue : chewyProductAttributes.attributeValues) {
+				ChewySkuDto thisSkuDto = attributeValue.skuDto;
+				if (thisSkuDto == null || !skus.add("" + thisSkuDto.id)) {
+					continue;
+				}
+				thisSkuDto.mapDescriptiveAttributes();
+				if (DOGS && isNotForBigDogs(thisSkuDto.descriptiveAttributesMap.get("BreedSize"))) {
+					continue;
+				}
 
-			String sku = attributes.substring(0, attributes.indexOf(","));
-			if (!skus.add(sku)) {
-				continue;
+				String url = baseUrl + thisSkuDto.id;
+				ChewyProduct product = generateProduct(url, Jsoup.connect(url).get());
+
+				product.option = thisSkuDto.definingAttributes.get(0).value;
+				for (ChewyAttribute attr : thisSkuDto.descriptiveAttributes) {
+					if (attr.identifier.equalsIgnoreCase("SizeStandard")) {
+						product.size = attr.value;
+					}
+					if (attr.identifier.equalsIgnoreCase("CountStandard")) {
+						product.count = attr.value;
+					}
+				}
+				System.out.println(product);
 			}
-			
-			String url = baseUrl + sku;
-
-			Document option = Jsoup.connect(url).get();
-			if (DOGS && !isForBigDogs(option)) {
-				continue;
-			}
-			ChewyProduct product = generateProduct(url, option);
-
-			String value = "\"value\":\"";
-			attributes = attributes.substring(attributes.indexOf(value) + value.length());
-			product.option = attributes.substring(0, attributes.indexOf("\""));
-
-			int endIndex = attributes.indexOf("skuDto");
-			String sizeString;
-			String countString;
-			if (endIndex > 0) {
-				countString = sizeString = attributes.substring(0, endIndex);
-			} else {
-				countString = sizeString = attributes;
-			}
-			countString = countString.substring(countString.indexOf(COUNT_KEY) + COUNT_KEY.length());
-			product.count = countString.substring(0, countString.indexOf("\""));
-			sizeString = sizeString.substring(sizeString.indexOf(SIZE_KEY) + SIZE_KEY.length());
-			product.size = sizeString.substring(0, sizeString.indexOf("\""));
-
-			System.out.println(product);
 		}
 	}
 
-	private static boolean isForBigDogs(Document document) {
+	private static boolean isNotForBigDogs(ChewyAttribute breedSize) {
+		return !(breedSize.value.contains("Large Breeds") || breedSize.value.contains("Giant Breeds"));
+	}
+
+	private static boolean isNotForBigDogs(Document document) {
 		boolean recordProduct = false;
 		Elements attributesList = document.getElementById("attributes").child(0).children();
 		for (Element attribute : attributesList) {
@@ -110,7 +114,7 @@ public class ChewyDataMain {
 				break;
 			}
 		}
-		return recordProduct;
+		return !recordProduct;
 	}
 
 	private static ChewyProduct generateProduct(String productUrl, Document document) {
@@ -129,20 +133,39 @@ public class ChewyDataMain {
 
 		product.imageUrl = document.getElementsByAttributeValue("id", "Zoomer").first().child(0).attr("data-src");
 
-		Element findOption = document.getElementById("variation-Count");
-		if (findOption == null) {
-			findOption = document.getElementById("variation-Size");
+		product.option = document.getElementsByAttributeValue("class", "ga-eec__variant").first().text();
+		String[] splitName = product.itemName.split(" ");
+		for (int i = 0; i < splitName.length; i++) {
+			if (splitName[i].equalsIgnoreCase("count") && splitName[i-1].matches("-?\\d+")) {
+				product.count = splitName[i-1];
+			}
+			if (splitName[i].toLowerCase().contains("oz") || splitName[i].toLowerCase().contains("lb")) {
+				product.size = splitName[i];
+			}
 		}
-		if (findOption != null) {
-			product.option = findOption.getElementsByAttributeValue("class", "attribute-selection__value").first()
-					.text();
+		if (product.size.isEmpty() && product.option.toLowerCase().contains("oz") || product.option.toLowerCase().contains("lb")) {
+			product.size = product.option.split(" ")[0];
+		}
+		if (product.count.isEmpty() && product.option.toLowerCase().contains("count")) {
+			String[] splitOption = product.option.split(" ");
+			for (int i = 0; i < splitOption.length; i++) {
+				if (splitOption[i].equalsIgnoreCase("count") && splitOption[i-1].matches("-?\\d+")) {
+					product.count = splitOption[i-1];
+				}
+			}
+		}
+		if (product.count.matches("-?\\d+")) {
+			BigDecimal count = new BigDecimal(product.count);
+			BigDecimal price = new BigDecimal(product.price.substring(1));
+			NumberFormat nf = NumberFormat.getCurrencyInstance();
+			product.pricePerEach = nf.format(price.divide(count, 2, RoundingMode.FLOOR));
 		}
 
 		return product;
 	}
 
-	private static List<String> findProductUrls(Document document) {
-		List<String> productUrlList = new ArrayList<>();
+	private static Set<String> findProductUrls(Document document) {
+		Set<String> productUrlList = new HashSet<>();
 		Elements productCardItems = document.getElementsByAttributeValue("class",
 				"product-holder js-tracked-product  cw-card cw-card-hover");
 		for (Element productCard : productCardItems) {
