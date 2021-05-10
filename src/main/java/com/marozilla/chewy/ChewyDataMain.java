@@ -2,52 +2,75 @@ package com.marozilla.chewy;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ChewyDataMain {
-	private static final boolean DOGS = true;
 	private static final Set<String> skus = new HashSet<>();
 	private static final Gson gson = new Gson();
+	private static String currentProductType = "";
 
-	public static void main(String[] args) throws IOException {
-		Document primaryPage = Jsoup.connect("https://www.chewy.com/b/dental-chews-1463").get();
+	public static void main(String[] args) {
+		LocalDateTime today = LocalDateTime.now();
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		String fileName = "src/main/resources/ChewyOutput" + today.format(DateTimeFormatter.ISO_LOCAL_DATE) + ".xlsx";
+		try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
+			for (ChewyUrl url : ChewyUrl.values()) {
+				int rowCount = 0;
+				XSSFSheet sheet = workbook.createSheet(url.name());
+				ChewyProduct.writeHeaders(sheet.createRow(++rowCount));
 
-		Set<String> pageUrlList = generatePageUrlList(primaryPage);
+				currentProductType = url.getCategory();
+				Document primaryPage = Jsoup.connect(url.getUrl()).get();
 
-		Set<String> productUrlList = findProductUrls(primaryPage);
-		for (String pageUrl : pageUrlList) {
-			productUrlList.addAll(findProductUrls(Jsoup.connect(pageUrl).get()));
-		}
-
-		for (String productUrl : productUrlList) {
-			Document document = Jsoup.connect(productUrl).get();
-//			String[] splits = productUrl.split("/");
-//			String fileName = splits[splits.length - 1] + ".html";
-//			FileWriter fileWriter = new FileWriter(fileName);
-//			fileWriter.write(document.toString());
-//			fileWriter.close();
-
-			Element options = document.getElementById("vue-portal__sfw-attribute-buttons");
-			if (options != null) {
-				generateProductsFromOptions(productUrl, options);
-			} else {
-				if (DOGS && isNotForBigDogs(document)) {
-					continue;
+				Set<String> productUrlList = findProductUrls(primaryPage);
+				Set<String> pageUrlList = generatePageUrlList(primaryPage);
+				for (String pageUrl : pageUrlList) {
+					productUrlList.addAll(findProductUrls(Jsoup.connect(pageUrl).get()));
 				}
-				System.out.println(generateProduct(productUrl, document));
+
+				for (String productUrl : productUrlList) {
+					Thread.sleep(1000);
+					Document document = Jsoup.connect(productUrl).get();
+
+					Element options = document.getElementById("vue-portal__sfw-attribute-buttons");
+					if (options != null) {
+						List<ChewyProduct> products = generateProductsFromOptions(url.getType(), productUrl, options);
+						for (ChewyProduct product : products) {
+							product.writeRow(sheet.createRow(++rowCount));
+						}
+					} else {
+						if (url.getType() == PetType.DOG && isNotForBigDogs(document)) {
+							continue;
+						}
+						ChewyProduct chewyProduct = generateProduct(productUrl, document);
+						chewyProduct.writeRow(sheet.createRow(++rowCount));
+						if (skus.size()%50 == 0) {
+							System.out.println(skus.size());
+						}
+					}
+				}
 			}
+			workbook.write(outputStream);
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -67,7 +90,9 @@ public class ChewyDataMain {
 		return pageUrlList;
 	}
 
-	private static void generateProductsFromOptions(String productUrl, Element options) throws IOException {
+	private static List<ChewyProduct> generateProductsFromOptions(PetType type, String productUrl, Element options) throws IOException {
+		List<ChewyProduct> products = new ArrayList<>();
+
 		String baseUrl = productUrl.substring(0, productUrl.lastIndexOf("/") + 1);
 		String attributes = options.attr("data-attributes");
 		Type founderListType = new TypeToken<ArrayList<ChewyProductAttributes>>(){}.getType();
@@ -75,11 +100,13 @@ public class ChewyDataMain {
 		for (ChewyProductAttributes chewyProductAttributes : attributesList) {
 			for (AttributeValue attributeValue : chewyProductAttributes.attributeValues) {
 				ChewySkuDto thisSkuDto = attributeValue.skuDto;
-				if (thisSkuDto == null || !skus.add("" + thisSkuDto.id)) {
+				if (thisSkuDto == null) {
 					continue;
 				}
 				thisSkuDto.mapDescriptiveAttributes();
-				if (DOGS && isNotForBigDogs(thisSkuDto.descriptiveAttributesMap.get("BreedSize"))) {
+				ChewyAttribute breedSize = thisSkuDto.descriptiveAttributesMap.get("BreedSize");
+				if ((type == PetType.DOG && breedSize != null && isNotForBigDogs(breedSize))
+						|| !skus.add("" + thisSkuDto.id)) {
 					continue;
 				}
 
@@ -95,9 +122,14 @@ public class ChewyDataMain {
 						product.count = attr.value;
 					}
 				}
-				System.out.println(product);
+				products.add(product);
+				if (skus.size()%50 == 0) {
+					System.out.println(skus.size());
+				}
 			}
 		}
+
+		return products;
 	}
 
 	private static boolean isNotForBigDogs(ChewyAttribute breedSize) {
@@ -119,7 +151,8 @@ public class ChewyDataMain {
 
 	private static ChewyProduct generateProduct(String productUrl, Document document) {
 		ChewyProduct product = new ChewyProduct();
-		product.URL = productUrl;
+		product.productType = currentProductType;
+		product.url = productUrl;
 
 		Element productName = document.getElementsByAttributeValue("id", "product-title").first();
 		product.brandName = productName.child(1).child(0).child(0).text();
@@ -127,7 +160,7 @@ public class ChewyDataMain {
 
 		product.price = document.getElementsByAttributeValue("class", "ga-eec__price").first().text();
 
-		String[] splits = product.URL.split("/");
+		String[] splits = product.url.split("/");
 		product.sku = splits[splits.length - 1];
 		skus.add(product.sku);
 
