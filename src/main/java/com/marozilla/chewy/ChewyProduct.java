@@ -1,6 +1,7 @@
 package com.marozilla.chewy;
 
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 public class ChewyProduct {
 	String SEPARATOR = "|";
@@ -17,6 +18,7 @@ public class ChewyProduct {
 	String pricePerEach = "";
 
 	public static void writeHeaders(Row headers) {
+		((XSSFCellStyle) headers.getRowStyle()).getFont().setBold(true);
 		headers.createCell(0).setCellValue("URL");
 		headers.createCell(1).setCellValue("Brand Name");
 		headers.createCell(2).setCellValue("Item Name");

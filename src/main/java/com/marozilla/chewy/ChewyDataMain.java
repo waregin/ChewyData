@@ -35,7 +35,7 @@ public class ChewyDataMain {
 			for (ChewyUrl url : ChewyUrl.values()) {
 				int rowCount = 0;
 				XSSFSheet sheet = workbook.createSheet(url.name());
-				ChewyProduct.writeHeaders(sheet.createRow(++rowCount));
+				ChewyProduct.writeHeaders(sheet.createRow(rowCount++));
 
 				currentProductType = url.getCategory();
 				Document primaryPage = Jsoup.connect(url.getUrl()).get();
@@ -47,21 +47,20 @@ public class ChewyDataMain {
 				}
 
 				for (String productUrl : productUrlList) {
-					Thread.sleep(1000);
-					Document document = Jsoup.connect(productUrl).get();
+					Document document = connectWithErrorHandling(productUrl);
 
 					Element options = document.getElementById("vue-portal__sfw-attribute-buttons");
 					if (options != null) {
-						List<ChewyProduct> products = generateProductsFromOptions(url.getType(), productUrl, options);
+						List<ChewyProduct> products = generateProductsFromOptions(url.isSizeMatters(), productUrl, options);
 						for (ChewyProduct product : products) {
-							product.writeRow(sheet.createRow(++rowCount));
+							product.writeRow(sheet.createRow(rowCount++));
 						}
 					} else {
-						if (url.getType() == PetType.DOG && isNotForBigDogs(document)) {
+						if (url.isSizeMatters() && isNotForBigDogs(document)) {
 							continue;
 						}
 						ChewyProduct chewyProduct = generateProduct(productUrl, document);
-						chewyProduct.writeRow(sheet.createRow(++rowCount));
+						chewyProduct.writeRow(sheet.createRow(rowCount++));
 						if (skus.size()%50 == 0) {
 							System.out.println(skus.size());
 						}
@@ -72,6 +71,23 @@ public class ChewyDataMain {
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private static Document connectWithErrorHandling(String url) throws InterruptedException {
+		Document document = null;
+		int weTried = 0;
+		while (document == null && weTried < 5) {
+			try {
+				document = Jsoup.connect(url).get();
+			} catch (Exception e) {
+				System.out.println("Error connecting to " + url);
+				e.printStackTrace();
+				Thread.sleep(15000);
+			} finally {
+				weTried++;
+			}
+		}
+		return document;
 	}
 
 	private static Set<String> generatePageUrlList(Document primaryPage) {
@@ -90,7 +106,7 @@ public class ChewyDataMain {
 		return pageUrlList;
 	}
 
-	private static List<ChewyProduct> generateProductsFromOptions(PetType type, String productUrl, Element options) throws IOException {
+	private static List<ChewyProduct> generateProductsFromOptions(boolean sizeMatters, String productUrl, Element options) throws IOException, InterruptedException {
 		List<ChewyProduct> products = new ArrayList<>();
 
 		String baseUrl = productUrl.substring(0, productUrl.lastIndexOf("/") + 1);
@@ -105,13 +121,14 @@ public class ChewyDataMain {
 				}
 				thisSkuDto.mapDescriptiveAttributes();
 				ChewyAttribute breedSize = thisSkuDto.descriptiveAttributesMap.get("BreedSize");
-				if ((type == PetType.DOG && breedSize != null && isNotForBigDogs(breedSize))
+				if ((sizeMatters && breedSize != null && isNotForBigDogs(breedSize))
 						|| !skus.add("" + thisSkuDto.id)) {
 					continue;
 				}
 
 				String url = baseUrl + thisSkuDto.id;
-				ChewyProduct product = generateProduct(url, Jsoup.connect(url).get());
+				Document document = connectWithErrorHandling(url);
+				ChewyProduct product = generateProduct(url, document);
 
 				product.option = thisSkuDto.definingAttributes.get(0).value;
 				for (ChewyAttribute attr : thisSkuDto.descriptiveAttributes) {
@@ -138,7 +155,11 @@ public class ChewyDataMain {
 
 	private static boolean isNotForBigDogs(Document document) {
 		boolean recordProduct = false;
-		Elements attributesList = document.getElementById("attributes").child(0).children();
+		Element attributes = document.getElementById("attributes");
+		if (attributes == null) {
+			return false;
+		}
+		Elements attributesList = attributes.child(0).children();
 		for (Element attribute : attributesList) {
 			if (attribute.child(0).text().equals("Breed Size")) {
 				recordProduct = attribute.child(1).text().contains("Large Breeds")
