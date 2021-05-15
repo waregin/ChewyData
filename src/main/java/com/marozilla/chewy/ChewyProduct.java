@@ -1,7 +1,9 @@
 package com.marozilla.chewy;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 public class ChewyProduct {
 	String SEPARATOR = "|";
@@ -18,20 +20,32 @@ public class ChewyProduct {
 	String pricePerEach = "";
 
 	public static void writeHeaders(Row headers) {
-		((XSSFCellStyle) headers.getRowStyle()).getFont().setBold(true);
-		headers.createCell(0).setCellValue("URL");
-		headers.createCell(1).setCellValue("Brand Name");
-		headers.createCell(2).setCellValue("Item Name");
-		headers.createCell(3).setCellValue("SKU");
-		headers.createCell(4).setCellValue("Image Url");
-		headers.createCell(5).setCellValue("Price");
-		headers.createCell(6).setCellValue("Option");
-		headers.createCell(7).setCellValue("Size");
-		headers.createCell(8).setCellValue("Count");
-		headers.createCell(9).setCellValue("Cost Each");
+		CellStyle headerStyle = headers.getSheet().getWorkbook().createCellStyle();
+		Font font = headers.getSheet().getWorkbook().createFont();
+		font.setBold(true);
+		headerStyle.setFont(font);
+
+		makeBoldCell(headers.createCell(0), headerStyle, "URL");
+		makeBoldCell(headers.createCell(1), headerStyle, "Brand Name");
+		makeBoldCell(headers.createCell(2), headerStyle, "Item Name");
+		makeBoldCell(headers.createCell(3), headerStyle, "SKU");
+		makeBoldCell(headers.createCell(4), headerStyle, "Image Url");
+		makeBoldCell(headers.createCell(5), headerStyle, "Price");
+		makeBoldCell(headers.createCell(6), headerStyle, "Option");
+		makeBoldCell(headers.createCell(7), headerStyle, "Size");
+		makeBoldCell(headers.createCell(8), headerStyle, "Count");
+		makeBoldCell(headers.createCell(9), headerStyle, "Cost Each");
+	}
+
+	private static void makeBoldCell(Cell cell, CellStyle headerStyle, String val) {
+		cell.setCellStyle(headerStyle);
+		cell.setCellValue(val);
 	}
 
 	public void writeRow(Row row) {
+		if (productType == ChewyUrl.PILL_TREATS.getCategory()) {
+			System.out.println(this);
+		}
 		row.createCell(0).setCellValue(url);
 		row.createCell(1).setCellValue(brandName);
 		row.createCell(2).setCellValue(itemName);

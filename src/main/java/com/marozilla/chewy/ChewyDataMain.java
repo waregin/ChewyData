@@ -10,7 +10,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -26,51 +25,61 @@ public class ChewyDataMain {
 	private static final Set<String> skus = new HashSet<>();
 	private static final Gson gson = new Gson();
 	private static String currentProductType = "";
+	private static String currentUrl;
 
 	public static void main(String[] args) {
 		LocalDateTime today = LocalDateTime.now();
+		System.out.println("Starting program at: " + today);
 		XSSFWorkbook workbook = new XSSFWorkbook();
+		workbook.createFont();
 		String fileName = "src/main/resources/ChewyOutput" + today.format(DateTimeFormatter.ISO_LOCAL_DATE) + ".xlsx";
 		try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
-			for (ChewyUrl url : ChewyUrl.values()) {
-				int rowCount = 0;
-				XSSFSheet sheet = workbook.createSheet(url.name());
-				ChewyProduct.writeHeaders(sheet.createRow(rowCount++));
+			try {
+				for (ChewyUrl url : ChewyUrl.values()) {
+					int rowCount = 0;
+					XSSFSheet sheet = workbook.createSheet(url.name());
+					ChewyProduct.writeHeaders(sheet.createRow(rowCount++));
 
-				currentProductType = url.getCategory();
-				Document primaryPage = Jsoup.connect(url.getUrl()).get();
+					currentProductType = url.getCategory();
+					Document primaryPage = connectWithErrorHandling(url.getUrl());
 
-				Set<String> productUrlList = findProductUrls(primaryPage);
-				Set<String> pageUrlList = generatePageUrlList(primaryPage);
-				for (String pageUrl : pageUrlList) {
-					productUrlList.addAll(findProductUrls(Jsoup.connect(pageUrl).get()));
-				}
+					Set<String> productUrlList = findProductUrls(primaryPage);
+					Set<String> pageUrlList = generatePageUrlList(primaryPage);
+					for (String pageUrl : pageUrlList) {
+						productUrlList.addAll(findProductUrls(connectWithErrorHandling(pageUrl)));
+					}
 
-				for (String productUrl : productUrlList) {
-					Document document = connectWithErrorHandling(productUrl);
+					for (String productUrl : productUrlList) {
+						Document document = connectWithErrorHandling(productUrl);
 
-					Element options = document.getElementById("vue-portal__sfw-attribute-buttons");
-					if (options != null) {
-						List<ChewyProduct> products = generateProductsFromOptions(url.isSizeMatters(), productUrl, options);
-						for (ChewyProduct product : products) {
-							product.writeRow(sheet.createRow(rowCount++));
-						}
-					} else {
-						if (url.isSizeMatters() && isNotForBigDogs(document)) {
-							continue;
-						}
-						ChewyProduct chewyProduct = generateProduct(productUrl, document);
-						chewyProduct.writeRow(sheet.createRow(rowCount++));
-						if (skus.size()%50 == 0) {
-							System.out.println(skus.size());
+						Element options = document.getElementById("vue-portal__sfw-attribute-buttons");
+						if (options != null) {
+							List<ChewyProduct> products = generateProductsFromOptions(url.isSizeMatters(), productUrl, options);
+							for (ChewyProduct product : products) {
+								product.writeRow(sheet.createRow(rowCount++));
+							}
+						} else {
+							if (url.isSizeMatters() && isNotForBigDogs(document)) {
+								continue;
+							}
+							ChewyProduct chewyProduct = generateProduct(productUrl, document);
+							chewyProduct.writeRow(sheet.createRow(rowCount++));
+							if (skus.size()%50 == 0) {
+								System.out.println(skus.size());
+							}
 						}
 					}
 				}
+			} catch (Exception e) {
+				System.out.println("Error in " + currentUrl);
+				e.printStackTrace();
 			}
 			workbook.write(outputStream);
-		} catch (IOException | InterruptedException e) {
+		} catch (Exception e) {
+			System.out.println("Error!");
 			e.printStackTrace();
 		}
+		System.out.println(LocalDateTime.now() + " All Done!");
 	}
 
 	private static Document connectWithErrorHandling(String url) throws InterruptedException {
@@ -80,8 +89,7 @@ public class ChewyDataMain {
 			try {
 				document = Jsoup.connect(url).get();
 			} catch (Exception e) {
-				System.out.println("Error connecting to " + url);
-				e.printStackTrace();
+				System.out.println("Error connecting to " + url + " : " + e.getMessage());
 				Thread.sleep(15000);
 			} finally {
 				weTried++;
@@ -106,7 +114,8 @@ public class ChewyDataMain {
 		return pageUrlList;
 	}
 
-	private static List<ChewyProduct> generateProductsFromOptions(boolean sizeMatters, String productUrl, Element options) throws IOException, InterruptedException {
+	private static List<ChewyProduct> generateProductsFromOptions(boolean sizeMatters,
+																  String productUrl, Element options) throws InterruptedException {
 		List<ChewyProduct> products = new ArrayList<>();
 
 		String baseUrl = productUrl.substring(0, productUrl.lastIndexOf("/") + 1);
@@ -130,14 +139,22 @@ public class ChewyDataMain {
 				Document document = connectWithErrorHandling(url);
 				ChewyProduct product = generateProduct(url, document);
 
-				product.option = thisSkuDto.definingAttributes.get(0).value;
+				if (product.option.isEmpty()) {
+					product.option = thisSkuDto.definingAttributes.get(0).value;
+					findCount(product);
+				} else {
+					product.option = thisSkuDto.definingAttributes.get(0).value;
+				}
 				for (ChewyAttribute attr : thisSkuDto.descriptiveAttributes) {
-					if (attr.identifier.equalsIgnoreCase("SizeStandard")) {
+					if (product.size.isEmpty() && attr.identifier.equalsIgnoreCase("SizeStandard")) {
 						product.size = attr.value;
 					}
-					if (attr.identifier.equalsIgnoreCase("CountStandard")) {
+					if (product.count.isEmpty() && attr.identifier.equalsIgnoreCase("CountStandard")) {
 						product.count = attr.value;
 					}
+				}
+				if (product.pricePerEach.isEmpty()) {
+					findPricePerEach(product);
 				}
 				products.add(product);
 				if (skus.size()%50 == 0) {
@@ -171,6 +188,7 @@ public class ChewyDataMain {
 	}
 
 	private static ChewyProduct generateProduct(String productUrl, Document document) {
+		currentUrl = productUrl;
 		ChewyProduct product = new ChewyProduct();
 		product.productType = currentProductType;
 		product.url = productUrl;
@@ -188,34 +206,71 @@ public class ChewyDataMain {
 		product.imageUrl = document.getElementsByAttributeValue("id", "Zoomer").first().child(0).attr("data-src");
 
 		product.option = document.getElementsByAttributeValue("class", "ga-eec__variant").first().text();
+		findCount(product);
 		String[] splitName = product.itemName.split(" ");
-		for (int i = 0; i < splitName.length; i++) {
-			if (splitName[i].equalsIgnoreCase("count") && splitName[i-1].matches("-?\\d+")) {
-				product.count = splitName[i-1];
-			}
-			if (splitName[i].toLowerCase().contains("oz") || splitName[i].toLowerCase().contains("lb")) {
-				product.size = splitName[i];
+		for (String s : splitName) {
+			if (s.toLowerCase().contains("oz") || s.toLowerCase().contains("lb")) {
+				product.size = s;
 			}
 		}
 		if (product.size.isEmpty() && product.option.toLowerCase().contains("oz") || product.option.toLowerCase().contains("lb")) {
 			product.size = product.option.split(" ")[0];
 		}
+
+		return product;
+	}
+
+	private static void findCount(ChewyProduct product) {
+		String[] splitName = product.itemName.split(" ");
+		for (int i = 0; i < splitName.length; i++) {
+			if (i > 0 && (splitName[i].equalsIgnoreCase("count")
+					|| splitName[i].equalsIgnoreCase("count,")) && isNumber(splitName[i-1])) {
+				int previousCount = 1;
+				try {
+					previousCount = Integer.parseInt(product.count);
+				} catch (NumberFormatException e) {
+					// ignore quietly
+				}
+				product.count = String.valueOf(previousCount * Integer.parseInt(splitName[i-1]));
+			}
+		}
+		String[] splitOption = product.option.split(" ");
 		if (product.count.isEmpty() && product.option.toLowerCase().contains("count")) {
-			String[] splitOption = product.option.split(" ");
-			for (int i = 0; i < splitOption.length; i++) {
-				if (splitOption[i].equalsIgnoreCase("count") && splitOption[i-1].matches("-?\\d+")) {
+			for (int i = 1; i < splitOption.length; i++) {
+				if (splitOption[i].toLowerCase().contains("count") && isNumber(splitOption[i-1])) {
 					product.count = splitOption[i-1];
 				}
 			}
 		}
-		if (product.count.matches("-?\\d+")) {
+		if (product.productType.equals(ChewyUrl.PILL_TREATS.getCategory()) && product.count.isEmpty()) {
+			if (product.option.toLowerCase().contains("capsule") || product.option.toLowerCase().contains("tablet")) {
+				for (int i = 1; i < splitOption.length; i++) {
+					if ((splitOption[i].toLowerCase().contains("capsule")
+							|| splitOption[i].toLowerCase().contains("tablet")) && isNumber(splitOption[i-1])) {
+						product.count = splitOption[i-1];
+					}
+				}
+			}
+		}
+		if (product.option.toLowerCase().contains("case of")) {
+			if (splitOption.length == 5 && isNumber(splitOption[0]) && isNumber(splitOption[4])) {
+				product.count = String.valueOf(Integer.parseInt(splitOption[0]) * Integer.parseInt(splitOption[4]));
+			}
+		}
+		findPricePerEach(product);
+	}
+
+	private static void findPricePerEach(ChewyProduct product) {
+		if (isNumber(product.count)) {
 			BigDecimal count = new BigDecimal(product.count);
 			BigDecimal price = new BigDecimal(product.price.substring(1));
 			NumberFormat nf = NumberFormat.getCurrencyInstance();
 			product.pricePerEach = nf.format(price.divide(count, 2, RoundingMode.FLOOR));
 		}
+	}
 
-		return product;
+	private static boolean isNumber(String s) {
+		return s.matches("-?\\d+");
 	}
 
 	private static Set<String> findProductUrls(Document document) {
