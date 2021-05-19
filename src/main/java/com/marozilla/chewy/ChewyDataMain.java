@@ -24,7 +24,7 @@ import java.util.Set;
 public class ChewyDataMain {
 	private static final Set<String> skus = new HashSet<>();
 	private static final Gson gson = new Gson();
-	private static String currentProductType = "";
+	private static ChewyUrl currentProductType;
 	private static String currentUrl;
 
 	public static void main(String[] args) {
@@ -37,10 +37,10 @@ public class ChewyDataMain {
 			try {
 				for (ChewyUrl url : ChewyUrl.values()) {
 					int rowCount = 0;
-					XSSFSheet sheet = workbook.createSheet(url.name());
-					ChewyProduct.writeHeaders(sheet.createRow(rowCount++));
+					XSSFSheet sheet = workbook.createSheet(url.getCategory());
+					ChewyProduct.writeHeaders(sheet.createRow(rowCount++), url);
 
-					currentProductType = url.getCategory();
+					currentProductType = url;
 					Document primaryPage = connectWithErrorHandling(url.getUrl());
 
 					Set<String> productUrlList = findProductUrls(primaryPage);
@@ -205,6 +205,25 @@ public class ChewyDataMain {
 
 		product.imageUrl = document.getElementsByAttributeValue("id", "Zoomer").first().child(0).attr("data-src");
 
+		if (currentProductType.isWantNutrition()) {
+			Element nutIn = document.getElementById("Nutritional-Info");
+			if (nutIn != null) {
+				Elements nutritionalInfo = nutIn.getElementsByTag("td");
+				if (nutritionalInfo.size() >= 8) {
+					product.protein = nutritionalInfo.get(1).text();
+					product.fat = nutritionalInfo.get(3).text();
+					product.fiber = nutritionalInfo.get(5).text();
+					product.moisture = nutritionalInfo.get(7).text();
+				}
+			}
+		}
+		if (currentProductType.isWantFeeding()) {
+			Element feedingInstructions = document.getElementById("Feeding-Instructions");
+			if (feedingInstructions != null) {
+				product.feedingInstructions = feedingInstructions.child(1).wholeText();
+			}
+		}
+
 		product.option = document.getElementsByAttributeValue("class", "ga-eec__variant").first().text();
 		findCount(product);
 		String[] splitName = product.itemName.split(" ");
@@ -242,7 +261,7 @@ public class ChewyDataMain {
 				}
 			}
 		}
-		if (product.productType.equals(ChewyUrl.PILL_TREATS.getCategory()) && product.count.isEmpty()) {
+		if (product.productType.equals(ChewyUrl.PILL_TREATS) && product.count.isEmpty()) {
 			if (product.option.toLowerCase().contains("capsule") || product.option.toLowerCase().contains("tablet")) {
 				for (int i = 1; i < splitOption.length; i++) {
 					if ((splitOption[i].toLowerCase().contains("capsule")

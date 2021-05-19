@@ -11,12 +11,12 @@ public enum ChewyUrl {
     NATURAL_CHEW("Natural Chews", "https://www.chewy.com/b/natural-chews-1544", true, false, false),
     RAWHIDE_ALT("Rawhide Alternatives", "https://www.chewy.com/b/rawhide-alternatives-9939", true, false, false),
     HARD_CHEW("Hard Chews", "https://www.chewy.com/b/hard-chews-9938", true, false, false),
-    DOG_FOOD("Food", "https://www.chewy.com/b/food-332", true, true, true),
-    CAT_FOOD("Food", "https://www.chewy.com/b/food-387", false, true, true);
+    DOG_FOOD("Dog Food", "https://www.chewy.com/b/food-332", true, true, true),
+    CAT_FOOD("Cat Food", "https://www.chewy.com/b/food-387", false, true, true);
 
     private final String category;
     private final String url;
-    private boolean sizeMatters;
+    private final boolean sizeMatters;
     private final boolean wantNutrition;
     private final boolean wantFeeding;
 
