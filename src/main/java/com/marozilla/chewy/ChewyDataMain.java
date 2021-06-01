@@ -220,7 +220,7 @@ public class ChewyDataMain {
 		if (currentProductType.isWantFeeding()) {
 			Element feedingInstructions = document.getElementById("Feeding-Instructions");
 			if (feedingInstructions != null) {
-				product.feedingInstructions = feedingInstructions.child(1).wholeText();
+				product.feedingInstructions = feedingInstructions.child(1).child(0).wholeText().strip();
 			}
 		}
 
