@@ -23,6 +23,7 @@ public class ChewyProduct {
 	String size = "";
 	String count = "";
 	String pricePerEach = "";
+	String containsSamsonAllergen = "";
 
 	public static void writeHeaders(Row headers, ChewyUrl chewyUrl) {
 		CellStyle headerStyle = headers.getSheet().getWorkbook().createCellStyle();
@@ -36,6 +37,7 @@ public class ChewyProduct {
 		makeBoldCell(headers.createCell(i++), headerStyle, "Item Name");
 		makeBoldCell(headers.createCell(i++), headerStyle, "SKU");
 		makeBoldCell(headers.createCell(i++), headerStyle, "Image Url");
+		makeBoldCell(headers.createCell(i++), headerStyle, "Contains Samson Allergen");
 		if (chewyUrl.isWantNutrition()) {
 			makeBoldCell(headers.createCell(i++), headerStyle, "Protein");
 			makeBoldCell(headers.createCell(i++), headerStyle, "Fat");
@@ -64,6 +66,9 @@ public class ChewyProduct {
 		row.createCell(i++).setCellValue(itemName);
 		row.createCell(i++).setCellValue(sku);
 		row.createCell(i++).setCellValue(imageUrl);
+		if (productType == ChewyUrl.WET_CAT_FOOD) {
+			row.createCell(i++).setCellValue(containsSamsonAllergen);
+		}
 		if (productType.isWantNutrition()) {
 			row.createCell(i++).setCellValue(protein);
 			row.createCell(i++).setCellValue(fat);
@@ -83,8 +88,8 @@ public class ChewyProduct {
 	@Override
 	public String toString() {
 		return productType + SEPARATOR + url + SEPARATOR + brandName + SEPARATOR + itemName + SEPARATOR + sku
-				+ SEPARATOR + imageUrl + SEPARATOR + protein + SEPARATOR + fat + SEPARATOR + fiber + SEPARATOR + moisture
-				+ SEPARATOR + feedingInstructions + SEPARATOR + price + SEPARATOR + option + SEPARATOR + size + SEPARATOR + count
-				+ SEPARATOR + pricePerEach;
+				+ SEPARATOR + imageUrl + SEPARATOR + containsSamsonAllergen + SEPARATOR + protein + SEPARATOR + fat + SEPARATOR + fiber
+				+ SEPARATOR + moisture + SEPARATOR + feedingInstructions + SEPARATOR + price + SEPARATOR + option
+				+ SEPARATOR + size + SEPARATOR + count + SEPARATOR + pricePerEach;
 	}
 }

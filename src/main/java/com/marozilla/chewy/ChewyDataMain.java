@@ -16,20 +16,22 @@ import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ChewyDataMain {
-	private static final Set<String> skus = new HashSet<>();
-	private static final Gson gson = new Gson();
+	private static Set<String> skus = new HashSet<>();
+	private static Set<String> completeUrlSet = new HashSet<>();
 	private static ChewyUrl currentProductType;
 	private static String currentUrl;
+	private static int num404s = 0;
 
 	public static void main(String[] args) {
 		LocalDateTime today = LocalDateTime.now();
 		System.out.println("Starting program at: " + today);
+		int productUrlsProcessed = 0;
+		int productUrlsTotal = 0;
+		int optionUrlsProcessed = 0;
+		int optionUrlListTotal = 0;
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		workbook.createFont();
 		String fileName = "src/main/resources/ChewyOutput" + today.format(DateTimeFormatter.ISO_LOCAL_DATE) + ".xlsx";
@@ -49,26 +51,53 @@ public class ChewyDataMain {
 						productUrlList.addAll(findProductUrls(connectWithErrorHandling(pageUrl)));
 					}
 
+					productUrlsTotal = productUrlList.size();
 					for (String productUrl : productUrlList) {
+						productUrlsProcessed++;
 						Document document = connectWithErrorHandling(productUrl);
 
-						Element options = document.getElementById("vue-portal__sfw-attribute-buttons");
-						if (options != null) {
-							List<ChewyProduct> products = generateProductsFromOptions(url.isSizeMatters(), productUrl, options);
-							for (ChewyProduct product : products) {
-								product.writeRow(sheet.createRow(rowCount++));
-							}
-						} else {
-							if (url.isSizeMatters() && isNotForBigDogs(document)) {
+						Set<String> optionUrlList = generateProductUrlsFromOptions(productUrl, document);
+						optionUrlList.removeAll(productUrlList);
+						optionUrlList.add(productUrl);
+						optionUrlListTotal += optionUrlList.size();
+
+						for (String optionUrl : optionUrlList) {
+							optionUrlsProcessed++;
+							String sku = optionUrl.substring(optionUrl.lastIndexOf("/") + 1);
+							if (!skus.add(sku) && !completeUrlSet.add(optionUrl)) {
 								continue;
 							}
-							ChewyProduct chewyProduct = generateProduct(productUrl, document);
+							if (!optionUrl.equals(document != null ? document.baseUri() : null)) {
+								document = connectWithErrorHandling(optionUrl);
+							}
+
+							if (document == null || (url.isSizeMatters() && isNotForBigDogs(document))) {
+								continue;
+							}
+
+							ChewyProduct chewyProduct = generateProduct(optionUrl, document);
+							if (chewyProduct == null) {
+								continue;
+							}
 							chewyProduct.writeRow(sheet.createRow(rowCount++));
-							if (skus.size()%50 == 0) {
-								System.out.println(skus.size());
+							if (skus.size()%50 == 0 || completeUrlSet.size()%50 == 0) {
+								System.out.println(LocalDateTime.now() + "\n   num skus: " + skus.size()
+										+ "\n   num complete URLs: " + completeUrlSet.size()
+										+ "\n   product urls processed: " + productUrlsProcessed
+										+ "\n   option urls processed: " + optionUrlsProcessed);
 							}
 						}
 					}
+					System.out.println("We got " + num404s + " 404 errors processing " + url.getCategory());
+					System.out.println(LocalDateTime.now() + "\n   num skus: " + skus.size()
+							+ "\n   num complete URLs: " + completeUrlSet.size()
+							+ "\n   product urls total: " + productUrlsTotal
+							+ "\n   product urls processed: " + productUrlsProcessed
+							+ "\n   option urls total: " + optionUrlListTotal
+							+ "\n   option urls processed: " + optionUrlsProcessed);
+					num404s = 0;
+					skus = new HashSet<>();
+					completeUrlSet = new HashSet<>();
 				}
 			} catch (Exception e) {
 				System.out.println("Error in " + currentUrl);
@@ -79,7 +108,24 @@ public class ChewyDataMain {
 			System.out.println("Error!");
 			e.printStackTrace();
 		}
-		System.out.println(LocalDateTime.now() + " All Done!");
+	}
+
+	private static Set<String> generateProductUrlsFromOptions(String productUrl, Document document) {
+		Set<String> productUrls = new HashSet<>();
+		String baseUrl = productUrl.substring(0, productUrl.lastIndexOf("/") + 1);
+
+		Elements chipOptionElements = document.getElementsByAttributeValue("class", "kib-chip-choice__control");
+		Elements dropdownOptionElements = document.getElementsByAttributeValue("data-testid", "dropdown-radio-input");
+		Elements iterateOptions = chipOptionElements;
+		iterateOptions.addAll(dropdownOptionElements);
+		for (Element e : iterateOptions) {
+			String value = e.val();
+			if (!value.isEmpty()) {
+				productUrls.add(baseUrl + value);
+			}
+		}
+
+		return productUrls;
 	}
 
 	private static Document connectWithErrorHandling(String url) throws InterruptedException {
@@ -89,7 +135,11 @@ public class ChewyDataMain {
 			try {
 				document = Jsoup.connect(url).get();
 			} catch (Exception e) {
-				System.out.println("Error connecting to " + url + " : " + e.getMessage());
+				if (e.toString().toLowerCase().contains("status=404")) {
+					num404s++;
+					return null;
+				}
+				System.out.println("Error connecting to " + url + " : " + e);
 				Thread.sleep(15000);
 			} finally {
 				weTried++;
@@ -101,10 +151,10 @@ public class ChewyDataMain {
 	private static Set<String> generatePageUrlList(Document primaryPage) {
 		Set<String> pageUrlList = new HashSet<>();
 		Elements paginationItems = primaryPage.getElementsByAttributeValue("class",
-				"pagination_selection cw-pagination__item");
+				"kib-pagination-new__list-item");
 		if (paginationItems.size() > 1) {
 			int numPages = Integer.parseInt(paginationItems.last().text());
-			String pageTwoUrl = paginationItems.first().attr("href");
+			String pageTwoUrl = paginationItems.get(1).child(0).attr("href");
 			pageUrlList.add("https://www.chewy.com" + pageTwoUrl);
 			for (int i = 3; i <= numPages; i++) {
 				String pageUrl = pageTwoUrl.replace("p2", "p" + i);
@@ -114,73 +164,16 @@ public class ChewyDataMain {
 		return pageUrlList;
 	}
 
-	private static List<ChewyProduct> generateProductsFromOptions(boolean sizeMatters,
-																  String productUrl, Element options) throws InterruptedException {
-		List<ChewyProduct> products = new ArrayList<>();
-
-		String baseUrl = productUrl.substring(0, productUrl.lastIndexOf("/") + 1);
-		String attributes = options.attr("data-attributes");
-		Type founderListType = new TypeToken<ArrayList<ChewyProductAttributes>>(){}.getType();
-		List<ChewyProductAttributes> attributesList = gson.fromJson(attributes, founderListType);
-		for (ChewyProductAttributes chewyProductAttributes : attributesList) {
-			for (AttributeValue attributeValue : chewyProductAttributes.attributeValues) {
-				ChewySkuDto thisSkuDto = attributeValue.skuDto;
-				if (thisSkuDto == null) {
-					continue;
-				}
-				thisSkuDto.mapDescriptiveAttributes();
-				ChewyAttribute breedSize = thisSkuDto.descriptiveAttributesMap.get("BreedSize");
-				if ((sizeMatters && breedSize != null && isNotForBigDogs(breedSize))
-						|| !skus.add("" + thisSkuDto.id)) {
-					continue;
-				}
-
-				String url = baseUrl + thisSkuDto.id;
-				Document document = connectWithErrorHandling(url);
-				ChewyProduct product = generateProduct(url, document);
-
-				if (product.option.isEmpty()) {
-					product.option = thisSkuDto.definingAttributes.get(0).value;
-					findCount(product);
-				} else {
-					product.option = thisSkuDto.definingAttributes.get(0).value;
-				}
-				for (ChewyAttribute attr : thisSkuDto.descriptiveAttributes) {
-					if (product.size.isEmpty() && attr.identifier.equalsIgnoreCase("SizeStandard")) {
-						product.size = attr.value;
-					}
-					if (product.count.isEmpty() && attr.identifier.equalsIgnoreCase("CountStandard")) {
-						product.count = attr.value;
-					}
-				}
-				if (product.pricePerEach.isEmpty()) {
-					findPricePerEach(product);
-				}
-				products.add(product);
-				if (skus.size()%50 == 0) {
-					System.out.println(skus.size());
-				}
-			}
-		}
-
-		return products;
-	}
-
-	private static boolean isNotForBigDogs(ChewyAttribute breedSize) {
-		return !(breedSize.value.contains("Large Breeds") || breedSize.value.contains("Giant Breeds"));
-	}
-
 	private static boolean isNotForBigDogs(Document document) {
-		boolean recordProduct = false;
-		Element attributes = document.getElementById("attributes");
-		if (attributes == null) {
+		Elements tableRows = document.getElementsByTag("tr");
+		if (tableRows == null || tableRows.size() == 0) {
 			return false;
 		}
-		Elements attributesList = attributes.child(0).children();
-		for (Element attribute : attributesList) {
-			if (attribute.child(0).text().equals("Breed Size")) {
-				recordProduct = attribute.child(1).text().contains("Large Breeds")
-						|| attribute.child(1).text().contains("Giant Breeds");
+		boolean recordProduct = false;
+		for (Element row : tableRows) {
+			if (row.childrenSize() == 2 && row.child(0).text().equals("Breed Size")) {
+				recordProduct = row.child(1).text().contains("Large Breeds")
+						|| row.child(1).text().contains("Giant Breeds");
 				break;
 			}
 		}
@@ -192,39 +185,86 @@ public class ChewyDataMain {
 		ChewyProduct product = new ChewyProduct();
 		product.productType = currentProductType;
 		product.url = productUrl;
+		product.sku = productUrl.substring(productUrl.lastIndexOf("/") + 1);
 
-		Element productName = document.getElementsByAttributeValue("id", "product-title").first();
+		Element productName = document.getElementsByAttributeValue("data-testid", "product-title").first();
+		if (productName == null) {
+			return null;
+		}
 		product.brandName = productName.child(1).child(0).child(0).text();
 		product.itemName = productName.child(0).text().replace(product.brandName, "").trim();
 
-		product.price = document.getElementsByAttributeValue("class", "ga-eec__price").first().text();
+		product.price = document.getElementsByAttributeValue("data-testid", "advertised-price").first().text().replace("Chewy Price", "");
 
-		String[] splits = product.url.split("/");
-		product.sku = splits[splits.length - 1];
-		skus.add(product.sku);
 
-		product.imageUrl = document.getElementsByAttributeValue("id", "Zoomer").first().child(0).attr("data-src");
+		product.imageUrl = document.getElementsByAttributeValue("class", "styles_mainCarouselImage__wj_bU").first().attr("src");
 
 		if (currentProductType.isWantNutrition()) {
-			Element nutIn = document.getElementById("Nutritional-Info");
+			if (document.getElementById("INGREDIENTS-section") != null) {
+				String ingredients = document.getElementById("INGREDIENTS-section").wholeText().toLowerCase();
+				for (String item : SamsonAllergensList.LIST) {
+					if (ingredients.contains(item)) {
+						product.containsSamsonAllergen = "true";
+						break;
+					}
+				}
+				if (product.containsSamsonAllergen.isEmpty()) {
+					product.containsSamsonAllergen = "false";
+				}
+			}
+
+			Element nutIn = document.getElementById("GUARANTEED_ANALYSIS-section");
 			if (nutIn != null) {
-				Elements nutritionalInfo = nutIn.getElementsByTag("td");
-				if (nutritionalInfo.size() >= 8) {
-					product.protein = nutritionalInfo.get(1).text();
-					product.fat = nutritionalInfo.get(3).text();
-					product.fiber = nutritionalInfo.get(5).text();
-					product.moisture = nutritionalInfo.get(7).text();
+				Elements nutritionalInfo = nutIn.getElementsByTag("tr");
+				for (Element infoItem : nutritionalInfo) {
+					if (infoItem.childrenSize() > 1) {
+						String label = infoItem.child(0).text().toLowerCase();
+						String value = infoItem.child(1).text();
+						if (label.contains("protein")) {
+							product.protein = value;
+						} else if (label.contains("fat")) {
+							product.fat = value;
+						} else if (label.contains("fiber")) {
+							product.fiber = value;
+						} else if (label.contains("moisture")) {
+							product.moisture = value;
+						}
+					}
 				}
 			}
 		}
 		if (currentProductType.isWantFeeding()) {
-			Element feedingInstructions = document.getElementById("Feeding-Instructions");
+			Element feedingInstructions = document.getElementById("FEEDING_INSTRUCTIONS-section");
 			if (feedingInstructions != null) {
-				product.feedingInstructions = feedingInstructions.child(1).child(0).wholeText().strip();
+				product.feedingInstructions = feedingInstructions.child(0).wholeText().strip();
 			}
 		}
 
-		product.option = document.getElementsByAttributeValue("class", "ga-eec__variant").first().text();
+		Elements optionElements = document.getElementsByAttributeValue("class", "styles_dropdownSelectorContainer__SBhgm");
+		Element optionElement = null;
+		if (optionElements.size() > 0) {
+			optionElement = optionElements.stream().filter(element ->
+					element.getElementsByAttributeValue("class", "kib-form-dropdown__label")
+							.first().text().contains("Size")).findFirst().orElse(null);
+			if (optionElement != null) {
+				optionElement = optionElement.getElementsByAttribute("checked").parents()
+						.first().getElementsByAttributeValue("class", "kib-radio__label").first();
+			}
+		} else {
+			optionElements = document.getElementsByAttributeValue("class", "styles_chipSelectorContainer__AEhGg");
+			if (optionElements.size() > 0) {
+				optionElement = optionElements.stream().filter(element ->
+						element.getElementsByAttributeValue("class", "styles_chipSelectorHeader__pKnJG kib-typography-paragraph1")
+								.first().text().contains("Size")).findFirst().orElse(null);
+				if (optionElement != null) {
+					optionElement = optionElement.getElementsByAttributeValue("aria-checked", "true")
+							.first().getElementsByAttributeValue("class", "styles_chipLabel__cJRBM").first();
+				}
+			}
+		}
+		if (optionElement != null) {
+			product.option = optionElement.text();
+		}
 		findCount(product);
 		String[] splitName = product.itemName.split(" ");
 		for (String s : splitName) {
@@ -271,9 +311,11 @@ public class ChewyDataMain {
 				}
 			}
 		}
-		if (product.option.toLowerCase().contains("case of")) {
-			if (splitOption.length == 5 && isNumber(splitOption[0]) && isNumber(splitOption[4])) {
+		if (product.option.toLowerCase().contains("case of") && splitOption.length == 5 && isNumber(splitOption[4])) {
+			if (isNumber(splitOption[0])) {
 				product.count = String.valueOf(Integer.parseInt(splitOption[0]) * Integer.parseInt(splitOption[4]));
+			} else if (product.productType.equals(ChewyUrl.WET_CAT_FOOD)) {
+				product.count = splitOption[4];
 			}
 		}
 		findPricePerEach(product);
@@ -295,9 +337,9 @@ public class ChewyDataMain {
 	private static Set<String> findProductUrls(Document document) {
 		Set<String> productUrlList = new HashSet<>();
 		Elements productCardItems = document.getElementsByAttributeValue("class",
-				"product-holder js-tracked-product  cw-card cw-card-hover");
+				"kib-product-card ProductListing_kibProductCard__qXL4s js-tracked-product");
 		for (Element productCard : productCardItems) {
-			productUrlList.add(productCard.child(0).attr("abs:href"));
+			productUrlList.add(productCard.child(0).child(0).attr("abs:href"));
 		}
 		return productUrlList;
 	}
