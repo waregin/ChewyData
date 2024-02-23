@@ -51,7 +51,7 @@ public class ChewyDataMain {
 						productUrlList.addAll(findProductUrls(connectWithErrorHandling(pageUrl)));
 					}
 
-					productUrlsTotal = productUrlList.size();
+					productUrlsTotal += productUrlList.size();
 					for (String productUrl : productUrlList) {
 						productUrlsProcessed++;
 						Document document = connectWithErrorHandling(productUrl);
