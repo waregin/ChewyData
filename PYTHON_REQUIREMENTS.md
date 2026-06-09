@@ -132,32 +132,52 @@ categories:
     size_matters: true
     want_nutrition: false
     want_feeding: false
+    allergen_profiles: []          # Dog treats — no allergen screening by default
 
   - name: "Dental Chews"
     url: "https://www.chewy.com/b/dental-chews-1463"
     size_matters: true
     want_nutrition: false
     want_feeding: false
+    allergen_profiles: []
 
-  # ... (all 16 categories)
+  - name: "Dry Cat Food"
+    url: "https://www.chewy.com/b/dry-food-388"
+    size_matters: true
+    want_nutrition: true
+    want_feeding: true
+    allergen_profiles: ["cat"]     # Screen against the "cat" pet profile
 
-allergens:
-  - alfalfa
-  - kelp
-  - rice
-  - corn
-  - peanut
-  - spinach
-  - flax
-  - pumpkin
-  - tomato
-  - candida albicans
-  - olive
-  - mulberry      # Note: Java version had typo "mulberr" — fixed here
-  - pecan
-  - wheat
-  - timothy
-  - dandelion
+  # ... (all 16 categories; see §6 for full allergen_profiles assignments)
+
+# Pet profiles define which allergens matter for each animal.
+# A category can be screened against multiple profiles simultaneously.
+# Adding a new profile (e.g., a dog with allergies) requires no code changes.
+pet_profiles:
+  - name: "cat"
+    allergens:
+      - alfalfa
+      - kelp
+      - rice
+      - corn
+      - peanut
+      - spinach
+      - flax
+      - pumpkin
+      - tomato
+      - candida albicans
+      - olive
+      - mulberry      # Note: Java version had typo "mulberr" — fixed here
+      - pecan
+      - wheat
+      - timothy
+      - dandelion
+
+  # Example future profile — uncomment and populate when needed:
+  # - name: "dog"
+  #   allergens:
+  #     - chicken
+  #     - beef
 ```
 
 ---
@@ -175,6 +195,20 @@ status          VARCHAR(20)   -- 'running', 'complete', 'failed'
 notes           TEXT
 ```
 
+**`pet_profiles`** — one row per named pet/animal profile
+```
+id              SERIAL PRIMARY KEY
+name            VARCHAR(100) UNIQUE NOT NULL   -- e.g. "cat", "dog"
+```
+
+**`pet_allergens`** — allergens belonging to a profile (configurable list)
+```
+id              SERIAL PRIMARY KEY
+profile_id      INTEGER REFERENCES pet_profiles(id)
+allergen        VARCHAR(100) NOT NULL
+UNIQUE (profile_id, allergen)
+```
+
 **`categories`** — one row per configured category
 ```
 id              SERIAL PRIMARY KEY
@@ -183,6 +217,13 @@ url             TEXT NOT NULL
 size_matters    BOOLEAN NOT NULL DEFAULT false
 want_nutrition  BOOLEAN NOT NULL DEFAULT false
 want_feeding    BOOLEAN NOT NULL DEFAULT false
+```
+
+**`category_allergen_profiles`** — which pet profiles screen each category
+```
+category_id     INTEGER REFERENCES categories(id)
+profile_id      INTEGER REFERENCES pet_profiles(id)
+PRIMARY KEY (category_id, profile_id)
 ```
 
 **`products`** — one row per unique product page URL
@@ -234,14 +275,16 @@ moisture_pct    NUMERIC(5,2)
 feeding_instructions TEXT
 ```
 
-**`allergen_detections`** — per-variant allergen flags per run
+**`allergen_detections`** — per-variant, per-profile allergen flags per run
 ```
 id              SERIAL PRIMARY KEY
 run_id          INTEGER REFERENCES scrape_runs(id)
 variant_id      INTEGER REFERENCES product_variants(id)
+profile_id      INTEGER REFERENCES pet_profiles(id)
 scraped_at      TIMESTAMPTZ NOT NULL
 allergen        VARCHAR(100) NOT NULL
 detected        BOOLEAN NOT NULL
+UNIQUE (run_id, variant_id, profile_id, allergen)
 ```
 
 ### 5.2 Design notes
@@ -249,32 +292,72 @@ detected        BOOLEAN NOT NULL
 - Prices stored as integer cents (avoids floating-point rounding errors; the Java version used BigDecimal for this reason)
 - `product_variants` is deduplicated by `sku` — same SKU found across runs updates `last_seen_at` rather than creating a new row
 - Full price and nutrition history is preserved via snapshot tables; queries can reconstruct price trends over time
-- Allergen detections stored per-allergen (normalized) rather than as a single boolean, allowing future queries like "which products contain wheat?"
+- Allergen detections stored per-allergen and per-profile (normalized), enabling queries like "show me all cat food variants with no detected allergens for the cat profile"
+
+### 5.3 Primary allergen-free query pattern
+
+The central use case is: **find the cheapest variant of every cat food product that is safe for the cat.** The query pattern:
+
+```sql
+-- All cat food variants with no allergens detected for the cat profile
+-- in the most recent scrape run
+SELECT
+    p.brand_name,
+    p.item_name,
+    pv.option_label,
+    pv.size_value,
+    pv.size_unit,
+    pv.count_value,
+    ps.price_cents / 100.0 AS price,
+    ps.price_per_each_cents / 100.0 AS price_per_each
+FROM product_variants pv
+JOIN products p ON p.id = pv.product_id
+JOIN categories c ON c.id = p.category_id
+JOIN price_snapshots ps ON ps.variant_id = pv.id
+    AND ps.run_id = (SELECT MAX(id) FROM scrape_runs WHERE status = 'complete')
+JOIN pet_profiles pp ON pp.name = 'cat'
+WHERE c.id IN (
+    SELECT category_id FROM category_allergen_profiles
+    WHERE profile_id = pp.id
+)
+AND NOT EXISTS (
+    SELECT 1 FROM allergen_detections ad
+    WHERE ad.variant_id = pv.id
+      AND ad.profile_id = pp.id
+      AND ad.run_id = ps.run_id
+      AND ad.detected = true
+)
+ORDER BY ps.price_per_each_cents ASC;
+```
+
+This query should be documented and tested as a first-class feature of the system — it is the primary output consumers care about.
 
 ---
 
 ## 6. Categories to Scrape
 
-Preserve all 16 categories from the Java version:
+Preserve all 16 categories from the Java version. The `allergen_profiles` column lists which pet profiles screen each category; empty means no allergen screening.
 
-| Category | URL slug | size_matters | want_nutrition | want_feeding |
-|---|---|---|---|---|
-| Pill Treats | `/b/pill-covers-wraps-2693` | true | false | false |
-| Dental Chews | `/b/dental-chews-1463` | true | false | false |
-| Bully Sticks | `/b/bully-sticks-1543` | true | false | false |
-| Bones | `/b/bones-1542` | true | false | false |
-| Rawhide | `/b/rawhide-1545` | true | false | false |
-| Antlers | `/b/antlers-1541` | true | false | false |
-| Himalayan Chews | `/b/himalayan-chews-2780` | true | false | false |
-| Natural Chews | `/b/natural-chews-1544` | true | false | false |
-| Rawhide Alternatives | `/b/rawhide-alternatives-9939` | true | false | false |
-| Hard Chews | `/b/hard-chews-9938` | true | false | false |
-| Dog Food | `/b/food-332` | true | true | true |
-| Dry Cat Food | `/b/dry-food-388` | true | true | true |
-| Premium Cat Food | `/b/premium-food-11741` | true | true | true |
-| Wet/Canned Cat Food | `/b/wet-food-389` | true | true | true |
-| Raw Cat Food | `/b/raw-food-8434` | true | true | true |
-| Freeze-Dried Cat Food | `/b/freeze-dried-dehydrated-food-11737` | true | true | true |
+| Category | URL slug | size_matters | want_nutrition | want_feeding | allergen_profiles |
+|---|---|---|---|---|---|
+| Pill Treats | `/b/pill-covers-wraps-2693` | true | false | false | — |
+| Dental Chews | `/b/dental-chews-1463` | true | false | false | — |
+| Bully Sticks | `/b/bully-sticks-1543` | true | false | false | — |
+| Bones | `/b/bones-1542` | true | false | false | — |
+| Rawhide | `/b/rawhide-1545` | true | false | false | — |
+| Antlers | `/b/antlers-1541` | true | false | false | — |
+| Himalayan Chews | `/b/himalayan-chews-2780` | true | false | false | — |
+| Natural Chews | `/b/natural-chews-1544` | true | false | false | — |
+| Rawhide Alternatives | `/b/rawhide-alternatives-9939` | true | false | false | — |
+| Hard Chews | `/b/hard-chews-9938` | true | false | false | — |
+| Dog Food | `/b/food-332` | true | true | true | — |
+| Dry Cat Food | `/b/dry-food-388` | true | true | true | cat |
+| Premium Cat Food | `/b/premium-food-11741` | true | true | true | cat |
+| Wet/Canned Cat Food | `/b/wet-food-389` | true | true | true | cat |
+| Raw Cat Food | `/b/raw-food-8434` | true | true | true | cat |
+| Freeze-Dried Cat Food | `/b/freeze-dried-dehydrated-food-11737` | true | true | true | cat |
+
+**Note on dog treats:** The 10 treat categories are primarily dog products and don't require allergen screening by default. If a dog with allergies is added as a profile later, assign those categories to `["dog"]` in `config.yaml` — no code change required.
 
 ---
 
