@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chewy-scraper"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "playwright>=1.44",
+    "beautifulsoup4>=4.12",
+    "lxml>=5.2",
+    "sqlalchemy[asyncio]>=2.0",
+    "asyncpg>=0.29",
+    "alembic>=1.13",
+    "pyyaml>=6.0",
+    "pydantic>=2.7",
+    "click>=8.1",
+    "structlog>=24.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2",
+    "pytest-asyncio>=0.23",
+]
+
+[project.scripts]
+chewy-scraper = "chewy_scraper.main:cli"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["chewy_scraper*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+markers = ["slow: marks tests as slow (deselect with '-m not slow')"]

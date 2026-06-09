@@ -1,0 +1,158 @@
+database:
+  url: "postgresql+asyncpg://user:password@localhost:5432/chewydata"
+  pool_size: 5
+
+scraping:
+  concurrency: 3
+  request_delay_min: 2.0
+  request_delay_max: 6.0
+  retry_max_attempts: 5
+  retry_backoff_base: 2.0
+  # Rotate randomly per request to reduce bot detection
+  user_agents:
+    - "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+    - "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+    - "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+    - "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0"
+    - "Mozilla/5.0 (Macintosh; Intel Mac OS X 14.4; rv:125.0) Gecko/20100101 Firefox/125.0"
+  # Optional: set to a proxy URL to route all requests through it, e.g. "http://user:pass@host:port"
+  proxy_url: null
+
+pet_profiles:
+  - name: "cat"
+    allergens:
+      - alfalfa
+      - kelp
+      - rice
+      - corn
+      - peanut
+      - spinach
+      - flax
+      - pumpkin
+      - tomato
+      - candida albicans
+      - olive
+      - mulberry
+      - pecan
+      - wheat
+      - timothy
+      - dandelion
+
+  # Uncomment and populate when needed:
+  # - name: "dog"
+  #   allergens:
+  #     - chicken
+  #     - beef
+
+categories:
+  - name: "Pill Treats"
+    url: "https://www.chewy.com/b/pill-covers-wraps-2693"
+    size_matters: true
+    want_nutrition: false
+    want_feeding: false
+    allergen_profiles: []
+
+  - name: "Dental Chews"
+    url: "https://www.chewy.com/b/dental-chews-1463"
+    size_matters: true
+    want_nutrition: false
+    want_feeding: false
+    allergen_profiles: []
+
+  - name: "Bully Sticks"
+    url: "https://www.chewy.com/b/bully-sticks-1543"
+    size_matters: true
+    want_nutrition: false
+    want_feeding: false
+    allergen_profiles: []
+
+  - name: "Bones"
+    url: "https://www.chewy.com/b/bones-1542"
+    size_matters: true
+    want_nutrition: false
+    want_feeding: false
+    allergen_profiles: []
+
+  - name: "Rawhide"
+    url: "https://www.chewy.com/b/rawhide-1545"
+    size_matters: true
+    want_nutrition: false
+    want_feeding: false
+    allergen_profiles: []
+
+  - name: "Antlers"
+    url: "https://www.chewy.com/b/antlers-1541"
+    size_matters: true
+    want_nutrition: false
+    want_feeding: false
+    allergen_profiles: []
+
+  - name: "Himalayan Chews"
+    url: "https://www.chewy.com/b/himalayan-chews-2780"
+    size_matters: true
+    want_nutrition: false
+    want_feeding: false
+    allergen_profiles: []
+
+  - name: "Natural Chews"
+    url: "https://www.chewy.com/b/natural-chews-1544"
+    size_matters: true
+    want_nutrition: false
+    want_feeding: false
+    allergen_profiles: []
+
+  - name: "Rawhide Alternatives"
+    url: "https://www.chewy.com/b/rawhide-alternatives-9939"
+    size_matters: true
+    want_nutrition: false
+    want_feeding: false
+    allergen_profiles: []
+
+  - name: "Hard Chews"
+    url: "https://www.chewy.com/b/hard-chews-9938"
+    size_matters: true
+    want_nutrition: false
+    want_feeding: false
+    allergen_profiles: []
+
+  - name: "Dog Food"
+    url: "https://www.chewy.com/b/food-332"
+    size_matters: true
+    want_nutrition: true
+    want_feeding: true
+    allergen_profiles: []
+
+  - name: "Dry Cat Food"
+    url: "https://www.chewy.com/b/dry-food-388"
+    size_matters: true
+    want_nutrition: true
+    want_feeding: true
+    allergen_profiles: ["cat"]
+
+  - name: "Premium Cat Food"
+    url: "https://www.chewy.com/b/premium-food-11741"
+    size_matters: true
+    want_nutrition: true
+    want_feeding: true
+    allergen_profiles: ["cat"]
+
+  - name: "Wet Cat Food"
+    url: "https://www.chewy.com/b/wet-food-389"
+    size_matters: true
+    want_nutrition: true
+    want_feeding: true
+    allergen_profiles: ["cat"]
+
+  - name: "Raw Cat Food"
+    url: "https://www.chewy.com/b/raw-food-8434"
+    size_matters: true
+    want_nutrition: true
+    want_feeding: true
+    allergen_profiles: ["cat"]
+
+  - name: "Freeze-Dried Cat Food"
+    url: "https://www.chewy.com/b/freeze-dried-dehydrated-food-11737"
+    size_matters: true
+    want_nutrition: true
+    want_feeding: true
+    allergen_profiles: ["cat"]
