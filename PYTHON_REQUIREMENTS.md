@@ -4,13 +4,30 @@
 
 Rebuild the existing Java-based Chewy.com web scraper in Python with the following improvements over the original:
 
-- Headless browser support (Playwright) to handle JavaScript-rendered pages, with an option to use Chewy's internal API if discoverable
+- Headless browser via **Playwright** to handle JavaScript-rendered pages, with an option to use Chewy's internal API if discoverable
 - PostgreSQL database output with full historical price/availability tracking
 - Concurrent execution with anti-ban rate limiting
 - Externalized configuration (YAML)
 - Designed to be called by an external scheduler (cron, GitHub Actions)
 
 The original Java scraper scraped 16 Chewy.com product categories, extracted product variants and nutritional/allergen data, and exported to Excel. The Python version preserves all of that data collection while improving reliability, extensibility, and data storage.
+
+### Prior work (waregin/ChewyScraper)
+
+A Selenium + BeautifulSoup proof-of-concept exists in the `ChewyScraper` repo (`main.py`). It is superseded by this build but validated several things that carry forward:
+
+- Chewy's product pages **require a real browser** (JS rendering confirmed necessary)
+- The following CSS selectors are **confirmed still working** and should be used verbatim:
+  - Product cards: `class="kib-product-card__content"`
+  - Pagination: `class="kib-pagination-new__list-item"`
+  - Product title block: `data-testid="product-title"`
+  - Brand name: `data-testid="manufacture-name"`
+  - Product heading: `data-testid="product-title-heading"`
+  - Price: `data-testid="advertised-price"`
+- Pagination URL pattern works: replace `p{N}` in the last page URL to generate intermediate page URLs
+- Brand name appears inside the product title and must be stripped from the product name string
+
+The Selenium code should not be extended further. Playwright is chosen for the full build due to its async-native API, built-in network request interception, and better anti-bot stealth support.
 
 ---
 
@@ -53,8 +70,8 @@ Before committing to a full Playwright implementation, inspect Chewy's network t
 
 | Concern | Library | Rationale |
 |---|---|---|
-| HTTP / JS rendering | `playwright` (async) | Handles JS-rendered pages; can intercept network requests |
-| Async HTTP (if API found) | `httpx[asyncio]` | Fast, async-native HTTP client |
+| HTTP / JS rendering | `playwright` (async) | Confirmed necessary (Chewy requires JS); async-native; built-in network interception; replaces Selenium POC |
+| Async HTTP (if API found) | `httpx[asyncio]` | Fast, async-native HTTP client for any discovered internal API endpoints |
 | HTML parsing | `beautifulsoup4` + `lxml` | Familiar, robust CSS selector support |
 | Database ORM | `sqlalchemy` (async) + `asyncpg` | Async PostgreSQL access; clean schema definition |
 | Migrations | `alembic` | Schema versioning |
@@ -537,16 +554,16 @@ Minimum coverage target: 70% on `parsers.py` and `normalizer.py`.
 
 ## 16. Suggested Implementation Order
 
-1. **Spike: find Chewy's internal API** — Open a Chewy product page in Chrome devtools, filter network by XHR/Fetch, look for JSON responses that match product data. If found, document the endpoint and build `api_client.py` first. This could eliminate the need for Playwright on those pages.
-2. **Database schema and migrations** — Define models, run `alembic init`, generate first migration.
-3. **Config loading** — `config.py` with Pydantic validation.
-4. **Parsers (offline)** — Write `parsers.py` against fixture HTML files. Write tests now.
-5. **Browser module** — Playwright setup with stealth, UA rotation, delay.
-6. **Category + product crawler** — Pagination and variant enumeration.
-7. **Pipeline / writer** — Connect scraped data to DB.
-8. **CLI entry point** — Wire it all together.
+1. **Spike: find Chewy's internal API** — With Playwright's network interception, intercept all XHR/Fetch calls while loading a Chewy category or product page. Look for JSON responses matching product data (a candidate response is already captured in `ChewyData/src/main/resources/data.json`). If a usable endpoint is found, document it and build `api_client.py` first — this could eliminate browser rendering for those pages entirely.
+2. **Database schema and migrations** — Define SQLAlchemy models, run `alembic init`, generate first migration.
+3. **Config loading** — `config.py` with Pydantic validation of `config.yaml`.
+4. **Parsers (offline)** — Write `parsers.py` using the confirmed selectors from §1 (Prior work). Test against the fixture HTML in `ChewyData/src/main/resources/page.html`.
+5. **Browser module** — Playwright setup with stealth, UA rotation, configurable delay.
+6. **Category + product crawler** — Pagination (confirmed pattern from POC) and variant enumeration (the main missing piece from the POC).
+7. **Pipeline / writer** — Connect scraped data to PostgreSQL via SQLAlchemy.
+8. **CLI entry point** — Wire it all together with `click`.
 9. **Anti-ban hardening** — Add all measures from §9.
-10. **Integration test** — Run against a single category end-to-end.
+10. **Integration test** — Run against a single cat food category end-to-end; verify allergen detection and DB writes.
 
 ---
 
