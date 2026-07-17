@@ -20,6 +20,12 @@ class ScrapingConfig(BaseModel):
     user_agents: list[str]
     proxy_url: str | None = None
 
+    # ── Anti-bot / stealth (Chewy uses Akamai Bot Manager) ────────────────
+    headless: bool = False          # headed evades far better; set True only if it works
+    stealth: bool = True            # inject fingerprint evasions before page scripts
+    warmup_url: str = "https://www.chewy.com"  # visit first so Akamai sets cookies
+    warmup_pause: float = 4.0       # seconds to let Akamai's sensor JS settle
+
     @field_validator("request_delay_max")
     @classmethod
     def max_gte_min(cls, v: float, info) -> float:

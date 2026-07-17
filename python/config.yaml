@@ -18,6 +18,14 @@ scraping:
   # Optional: set to a proxy URL to route all requests through it, e.g. "http://user:pass@host:port"
   proxy_url: null
 
+  # Anti-bot settings — Chewy uses Akamai Bot Manager, which blocks obvious bots.
+  # headless: false is strongly recommended (headless mode is the biggest detection
+  # signal). Only set true if scripts/spike_stealth.py --headless gets through.
+  headless: false
+  stealth: true               # inject fingerprint evasions before page scripts run
+  warmup_url: "https://www.chewy.com"   # visited first so Akamai sets its cookies
+  warmup_pause: 4.0           # seconds to let Akamai's sensor JS settle
+
 pet_profiles:
   - name: "cat"
     allergens:
