@@ -35,6 +35,7 @@ from chewy_scraper.scraper.browser import fetch_page_html, start_browser, stop_b
 from chewy_scraper.scraper.category import collect_product_urls
 from chewy_scraper.scraper.product import scrape_product_variants
 from chewy_scraper.utils.rate_limiter import RateLimiter
+from chewy_scraper.utils.retry import ChewyRateLimitError
 
 logger = logging.getLogger(__name__)
 
@@ -90,6 +91,8 @@ async def _run(cfg, active_categories, dry_run: bool) -> int:
     await start_browser(cfg.scraping)
     limiter = RateLimiter(cfg.scraping.request_delay_min, cfg.scraping.request_delay_max)
     errors = 0
+    products_processed = 0
+    cap = cfg.scraping.max_products_per_run
     run_id: int | None = None
 
     try:
@@ -134,6 +137,10 @@ async def _run(cfg, active_categories, dry_run: bool) -> int:
 
             seen_skus: set[str] = set()
             for i, product_url in enumerate(product_urls, 1):
+                if cap is not None and products_processed >= cap:
+                    logger.info("Reached max_products_per_run cap (%d) — stopping run.", cap)
+                    break
+
                 logger.debug("[%d/%d] %s", i, len(product_urls), product_url)
                 try:
                     variants = await scrape_product_variants(
@@ -144,10 +151,17 @@ async def _run(cfg, active_categories, dry_run: bool) -> int:
                         limiter=limiter,
                         seen_skus=seen_skus,
                     )
+                except ChewyRateLimitError as e:
+                    # Akamai is rate-limiting us. Stop the whole run rather than
+                    # hammering — that's what risks a harder ban. Try again later.
+                    logger.error("Rate-limited by Akamai (%s). Aborting run to stay safe.", e)
+                    raise
                 except Exception as e:
                     logger.error("Error scraping %s: %s", product_url, e)
                     errors += 1
                     continue
+
+                products_processed += 1
 
                 if dry_run:
                     for v in variants:
@@ -186,6 +200,9 @@ async def _run(cfg, active_categories, dry_run: bool) -> int:
                                 i, len(product_urls), category.name)
 
             logger.info("=== Finished category: %s ===", category.name)
+
+            if cap is not None and products_processed >= cap:
+                break
 
         if not dry_run and run_id is not None:
             status = "complete" if errors == 0 else "complete_with_errors"

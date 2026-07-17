@@ -4,6 +4,7 @@ from datetime import datetime
 
 from sqlalchemy import (
     Boolean,
+    DateTime,
     ForeignKey,
     Integer,
     Numeric,
@@ -12,7 +13,9 @@ from sqlalchemy import (
     UniqueConstraint,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy.dialects.postgresql import TIMESTAMPTZ
+
+# Timezone-aware timestamp; maps to TIMESTAMPTZ on PostgreSQL.
+TIMESTAMPTZ = DateTime(timezone=True)
 
 
 class Base(DeclarativeBase):

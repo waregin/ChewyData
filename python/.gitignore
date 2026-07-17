@@ -9,3 +9,8 @@ venv/
 *.db
 *.sqlite
 *.xlsx
+
+# Dedicated scraping browser profile (holds cookies — never commit)
+.chrome-profile/
+# Spike diagnostic output
+spike_output/

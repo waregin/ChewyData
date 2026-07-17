@@ -3,28 +3,36 @@ database:
   pool_size: 5
 
 scraping:
-  concurrency: 3
-  request_delay_min: 2.0
-  request_delay_max: 6.0
-  retry_max_attempts: 5
-  retry_backoff_base: 2.0
-  # Rotate randomly per request to reduce bot detection
+  # Gentle by design — Akamai punishes bursts. One page at a time, slow.
+  concurrency: 1
+  request_delay_min: 5.0        # seconds between requests (min)
+  request_delay_max: 12.0       # seconds between requests (max, random jitter)
+  retry_max_attempts: 4
+  retry_backoff_base: 5.0
   user_agents:
-    - "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
     - "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
-    - "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
-    - "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0"
-    - "Mozilla/5.0 (Macintosh; Intel Mac OS X 14.4; rv:125.0) Gecko/20100101 Firefox/125.0"
   # Optional: set to a proxy URL to route all requests through it, e.g. "http://user:pass@host:port"
   proxy_url: null
 
-  # Anti-bot settings — Chewy uses Akamai Bot Manager, which blocks obvious bots.
-  # headless: false is strongly recommended (headless mode is the biggest detection
-  # signal). Only set true if scripts/spike_stealth.py --headless gets through.
+  # ── Anti-bot (Chewy uses Akamai Bot Manager) ──────────────────────────
+  # headless: false is strongly recommended — headless is the biggest tell.
   headless: false
-  stealth: true               # inject fingerprint evasions before page scripts run
+  stealth: true                 # inject fingerprint evasions before page scripts run
   warmup_url: "https://www.chewy.com"   # visited first so Akamai sets its cookies
-  warmup_pause: 4.0           # seconds to let Akamai's sensor JS settle
+  warmup_pause: 4.0             # seconds to let Akamai's sensor JS settle
+
+  # Dedicated persistent Chrome profile (NOT your main profile, NOT Guest).
+  # Keeps Akamai cookies between runs so you look like a returning visitor.
+  # Created automatically; delete the folder to reset.
+  profile_dir: ".chrome-profile"
+  # Set to "chrome" to drive your REAL installed Chrome (more authentic
+  # fingerprint). Requires Chrome installed. null = bundled Chromium.
+  browser_channel: null
+  # Safety: stop after N products per run (small, infrequent runs = safest).
+  # null = no cap. Start small (e.g. 25) until you trust it.
+  max_products_per_run: 25
+  # After a 429, cool down this many seconds before aborting the run.
+  rate_limit_cooldown: 300.0
 
 pet_profiles:
   - name: "cat"

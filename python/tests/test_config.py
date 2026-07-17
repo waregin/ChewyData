@@ -57,3 +57,23 @@ def test_mulberry_not_misspelled():
 def test_delay_max_gte_min():
     cfg = load_config(CONFIG_PATH)
     assert cfg.scraping.request_delay_max >= cfg.scraping.request_delay_min
+
+
+def test_headed_by_default():
+    # Headless is the biggest Akamai detection signal — must default off.
+    cfg = load_config(CONFIG_PATH)
+    assert cfg.scraping.headless is False
+
+
+def test_persistent_profile_configured():
+    cfg = load_config(CONFIG_PATH)
+    assert cfg.scraping.profile_dir
+    # Must not be the literal Guest profile (Guest forgets cookies).
+    assert "guest" not in cfg.scraping.profile_dir.lower()
+
+
+def test_gentle_pacing():
+    # Serial, slow pacing is the whole point of the free anti-ban approach.
+    cfg = load_config(CONFIG_PATH)
+    assert cfg.scraping.concurrency == 1
+    assert cfg.scraping.request_delay_min >= 3.0
