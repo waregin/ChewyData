@@ -14,3 +14,6 @@ venv/
 .chrome-profile/
 # Spike diagnostic output
 spike_output/
+
+# Second patched profile dir
+.chrome-profile-patchright/
