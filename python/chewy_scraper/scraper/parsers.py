@@ -2,23 +2,26 @@
 HTML parsing utilities for Chewy.com product and category pages.
 
 All selectors target the current Chewy site design (data-testid attributes,
-kib-* class names). Confirmed working as of the Selenium POC; Chewy changes
+kib-* class names). Product-page selectors date from the Selenium POC;
+listing-page selectors were re-verified in Oct 2026 with
+scripts/dump_page.py. Chewy changes
 class names periodically so re-verify selectors after major site redesigns.
 """
 from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from urllib.parse import parse_qs, urljoin, urlsplit
 
 from bs4 import BeautifulSoup, Tag
 
 BASE_URL = "https://www.chewy.com"
+_DP_PATH = re.compile(r"/dp/\d+")
 
 # ── Selectors ──────────────────────────────────────────────────────────────
 # Isolated here so they can be updated without touching logic.
 
-SEL_PRODUCT_CARD = "kib-product-card__content"
-SEL_PAGINATION_ITEM = "kib-pagination-new__list-item"
+SEL_PRODUCT_CARD = {"data-testid": "plp-product-card"}   # verified 2026-10 (chirp redesign)
 SEL_PRODUCT_TITLE = {"data-testid": "product-title"}
 SEL_MANUFACTURE_NAME = {"data-testid": "manufacture-name"}
 SEL_PRODUCT_HEADING = {"data-testid": "product-title-heading"}
@@ -58,55 +61,57 @@ def parse_product_urls(html: str) -> list[str]:
     soup = BeautifulSoup(html, "lxml")
     urls: list[str] = []
     seen: set[str] = set()
-    for card in soup.find_all(class_=SEL_PRODUCT_CARD):
-        anchor = card.find("a", href=True)
+    for card in soup.find_all(attrs=SEL_PRODUCT_CARD):
+        anchor = card.find("a", href=_DP_PATH)
         if not anchor:
             continue
-        href: str = anchor["href"]
-        # Skip ad/tracking links
-        if "ms.tagdelivery" in href:
-            continue
-        # Normalise to absolute URL
-        if href.startswith("/"):
-            href = BASE_URL + href
-        if href not in seen:
-            seen.add(href)
-            urls.append(href)
+        url = _product_url(anchor["href"])
+        if url and url not in seen:
+            seen.add(url)
+            urls.append(url)
     return urls
+
+
+def _product_url(href: str) -> str | None:
+    """
+    Normalise a card link to a clean absolute product URL.
+
+    Sponsored cards link through an ad-click tracker whose `redirect` query
+    parameter holds the real product URL; those are unwrapped, not skipped,
+    because they are genuine products listed in the category.
+    """
+    if "redirect=" in href:
+        target = parse_qs(urlsplit(href).query).get("redirect", [""])[0]
+        if not _DP_PATH.search(target):
+            return None
+        href = target
+    parts = urlsplit(urljoin(BASE_URL, href))
+    if not _DP_PATH.search(parts.path):
+        return None
+    return f"{parts.scheme}://{parts.netloc}{parts.path}"
 
 
 def parse_page_urls(html: str, base_category_url: str) -> list[str]:
     """
     Return URLs for pages 2..N of a category listing.
     Page 1 is the base URL already loaded; this returns the rest.
+
+    Pagination links look like /b/bones-1542?page=7. The control may elide
+    middle pages, so N is the highest page number linked from this category.
     """
     soup = BeautifulSoup(html, "lxml")
-    items = soup.find_all(class_=SEL_PAGINATION_ITEM)
-    if len(items) < 2:
-        return []
+    base = urlsplit(base_category_url)
+    num_pages = 1
+    for anchor in soup.find_all("a", href=True):
+        parts = urlsplit(urljoin(BASE_URL, anchor["href"]))
+        if parts.path.rstrip("/") != base.path.rstrip("/"):
+            continue
+        page = parse_qs(parts.query).get("page", [""])[0]
+        if page.isdigit():
+            num_pages = max(num_pages, int(page))
 
-    try:
-        num_pages = int(items[-1].get_text(strip=True))
-    except (ValueError, IndexError):
-        return []
-
-    if num_pages <= 1:
-        return []
-
-    # Derive page-2 URL from the last pagination link, then replace page number
-    last_anchor = items[-1].find("a", href=True)
-    if not last_anchor:
-        return []
-    last_href: str = last_anchor["href"]
-    if last_href.startswith("/"):
-        last_href = BASE_URL + last_href
-
-    urls: list[str] = []
-    for i in range(2, num_pages + 1):
-        url = re.sub(r"p\d+", f"p{i}", last_href)
-        if url not in urls:
-            urls.append(url)
-    return urls
+    page_base = f"{base.scheme}://{base.netloc}{base.path}"
+    return [f"{page_base}?page={i}" for i in range(2, num_pages + 1)]
 
 
 # ── Product page ───────────────────────────────────────────────────────────
