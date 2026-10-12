@@ -5,6 +5,7 @@ fetch each variant URL, and return normalised data ready for DB insertion.
 from __future__ import annotations
 
 import logging
+import re
 from datetime import datetime, timezone
 
 from chewy_scraper.config import CategoryConfig, ScrapingConfig
@@ -25,6 +26,7 @@ from chewy_scraper.utils.retry import ChewyNotFoundError, with_retry
 logger = logging.getLogger(__name__)
 
 BASE_URL = "https://www.chewy.com"
+_DP_ID = re.compile(r"/dp/\d+")
 
 
 async def scrape_product_variants(
@@ -71,7 +73,7 @@ async def scrape_product_variants(
             config=config,
             limiter=limiter,
             seen_skus=seen_skus,
-            sku_override=None,
+            sku_override=parsed.sku,
         )
 
     results: list[NormalisedVariant] = []
@@ -80,22 +82,29 @@ async def scrape_product_variants(
             continue
         seen_skus.add(option.sku)
 
-        variant_url = f"{product_url.rstrip('/')}/{option.sku}"
-        await limiter.wait()
-        try:
-            variant_html = await with_retry(
-                lambda: fetch_page_html(variant_url, config),
-                max_attempts=config.retry_max_attempts,
-                backoff_base=config.retry_backoff_base,
-            )
-        except ChewyNotFoundError:
-            logger.warning("404 for variant: %s", variant_url)
-            continue
+        if option.sku == parsed.sku:
+            # The page we already loaded IS this variant — no second fetch.
+            variant_parsed = parsed
+        else:
+            # Each SKU has its own page: same slug, /dp/<partNumber>. Fetched
+            # because only the shown item carries ingredients and analysis,
+            # which differ between flavours.
+            variant_url = _DP_ID.sub(f"/dp/{option.sku}", product_url, count=1)
+            await limiter.wait()
+            try:
+                variant_html = await with_retry(
+                    lambda: fetch_page_html(variant_url, config),
+                    max_attempts=config.retry_max_attempts,
+                    backoff_base=config.retry_backoff_base,
+                )
+            except ChewyNotFoundError:
+                logger.warning("404 for variant: %s", variant_url)
+                continue
 
-        variant_parsed = parse_product_page(variant_html)
-        if variant_parsed is None:
-            logger.warning("Could not parse variant page: %s", variant_url)
-            continue
+            variant_parsed = parse_product_page(variant_html)
+            if variant_parsed is None:
+                logger.warning("Could not parse variant page: %s", variant_url)
+                continue
 
         normalised = _normalise(
             sku=option.sku,

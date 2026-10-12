@@ -64,3 +64,42 @@ def test_review_keyword_chips_are_not_variants():
     <input class="kib-chip-choice__control" value="for dogs" aria-label="for dogs">
     """
     assert _parse_options(BeautifulSoup(html, "lxml")) == []
+
+
+# ── Product page (Oct 2026 layout: data in __NEXT_DATA__ Apollo state) ─────
+
+from pathlib import Path
+
+from chewy_scraper.pipeline.normalizer import parse_nutrition
+from chewy_scraper.scraper.parsers import parse_product_page
+
+PDP_HTML = (Path(__file__).parent / "fixtures" / "pdp_next_data.html").read_text()
+
+
+def test_product_core_fields_from_next_data():
+    p = parse_product_page(PDP_HTML)
+    assert p is not None
+    assert p.sku == "1819678"
+    assert p.brand_name == "Chewy Made"
+    assert p.item_name.startswith("Peanut Butter Flavored Filled Bone")
+    assert p.item_name.endswith("1 count")
+    assert p.price_str == "$6.99"
+    assert p.image_url.endswith("_AC_SS1800_V1_.jpg")
+
+
+def test_product_details_from_info_groups():
+    p = parse_product_page(PDP_HTML)
+    assert p.ingredients_text.startswith("Beef Bone, Chicken Meal")
+    assert p.feeding_instructions.startswith("This product is intended")
+    assert parse_nutrition(p.nutrition) == {
+        "protein_pct": 18.0, "fat_pct": 3.5, "fiber_pct": 2.0, "moisture_pct": 22.0,
+    }
+
+
+def test_variants_are_every_published_item():
+    p = parse_product_page(PDP_HTML)
+    by_sku = {o.sku: o.label for o in p.options}
+    assert len(by_sku) == 9
+    assert by_sku["1819678"] == "Peanut Butter, 1 count"
+    assert by_sku["1819710"] == "Cheese & Bacon, 5 count"
+    assert by_sku["2195470"] == "Peanut Butter, 3 count bundle"
