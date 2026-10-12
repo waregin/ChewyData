@@ -12,30 +12,32 @@ class DatabaseConfig(BaseModel):
 
 
 class ScrapingConfig(BaseModel):
-    # Concurrency 1 = one page at a time. Gentle by design — Akamai punishes bursts.
+    # Concurrency 1 = one page at a time. Gentle by design — bot walls punish bursts.
     concurrency: int = 1
     request_delay_min: float = 5.0
     request_delay_max: float = 12.0
     retry_max_attempts: int = 4
     retry_backoff_base: float = 5.0
-    user_agents: list[str]
+    # Unused by the browser: Patchright runs real Chrome with its own, matching
+    # user agent. Kept so older config files still load.
+    user_agents: list[str] = []
     proxy_url: str | None = None
 
-    # ── Anti-bot / stealth (Chewy uses Akamai Bot Manager) ────────────────
+    # ── Anti-bot (Chewy uses Kasada; we drive Chrome via Patchright) ──────
     headless: bool = False          # headed evades far better; set True only if it works
-    stealth: bool = True            # inject fingerprint evasions before page scripts
-    warmup_url: str = "https://www.chewy.com"  # visit first so Akamai sets cookies
-    warmup_pause: float = 4.0       # seconds to let Akamai's sensor JS settle
+    warmup_url: str = "https://www.chewy.com"  # visit first so Kasada issues cookies
+    warmup_pause: float = 4.0       # seconds of idle scrolling after warm-up
+    challenge_timeout: float = 45.0  # max seconds to wait for Kasada's challenge to solve
+    block_resources: bool = False   # block images/fonts/media (untested against Kasada)
 
     # ── Persistent, logged-out scraping profile ───────────────────────────
     # A dedicated Chrome profile dir (NOT your main profile, NOT Guest) that
-    # keeps its Akamai cookies between runs so you look like a returning
+    # keeps its Kasada cookies between runs so you look like a returning
     # visitor. Created automatically on first run.
-    profile_dir: str = ".chrome-profile"
-    # Set to "chrome" to drive your REAL installed Chrome (more authentic
-    # fingerprint than Playwright's bundled Chromium). Requires Chrome
-    # installed. Leave null to use the bundled Chromium.
-    browser_channel: str | None = None
+    profile_dir: str = ".chrome-profile-patchright"
+    # "chrome" drives your REAL installed Chrome — the setup proven to pass
+    # Kasada. null = Patchright's bundled Chromium (untested against Chewy).
+    browser_channel: str | None = "chrome"
     # Safety cap: stop after N products per run. null = no cap. Keeping runs
     # small and infrequent is the best defence against a rate-limit ban.
     max_products_per_run: int | None = None

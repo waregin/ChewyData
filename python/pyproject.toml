@@ -7,7 +7,8 @@ name = "chewy-scraper"
 version = "0.1.0"
 requires-python = ">=3.11"
 dependencies = [
-    "playwright>=1.44",
+    "patchright>=1.52",
+    "playwright>=1.44",  # scripts/spike_*.py comparisons only
     "beautifulsoup4>=4.12",
     "lxml>=5.2",
     "sqlalchemy[asyncio]>=2.0",
