@@ -198,7 +198,7 @@ def _parse_options(soup: BeautifulSoup) -> list[ParsedVariantOption]:
     for chip in soup.find_all(class_=SEL_CHIP_OPTION):
         sku = chip.get("value", "").strip()
         label = chip.get("aria-label") or chip.get_text(strip=True)
-        if sku and sku not in seen_skus:
+        if _is_sku(sku) and sku not in seen_skus:
             seen_skus.add(sku)
             options.append(ParsedVariantOption(sku=sku, label=label))
 
@@ -207,11 +207,20 @@ def _parse_options(soup: BeautifulSoup) -> list[ParsedVariantOption]:
         for opt in soup.find_all(attrs=SEL_DROPDOWN_OPTION):
             sku = opt.get("value", "").strip()
             label = opt.get("aria-label") or opt.get_text(strip=True)
-            if sku and sku not in seen_skus:
+            if _is_sku(sku) and sku not in seen_skus:
                 seen_skus.add(sku)
                 options.append(ParsedVariantOption(sku=sku, label=label))
 
     return options
+
+
+def _is_sku(value: str) -> bool:
+    """
+    SKUs are numeric. Since the 2026 redesign the old chip class is also used
+    for review-keyword filters ("smell", "texture"), which must not be
+    mistaken for variants and fetched as /dp/<id>/smell.
+    """
+    return value.isdigit()
 
 
 def _parse_text_section(soup: BeautifulSoup, section_id: str) -> str | None:

@@ -1,5 +1,5 @@
 """
-Listing-page parsing against a trimmed copy of the Oct 2026 Chewy layout
+Parser tests. Listing-page cases use a trimmed copy of the Oct 2026 Chewy layout
 (chirp product cards, ?page=N pagination), as seen via scripts/dump_page.py.
 """
 from chewy_scraper.scraper.parsers import parse_page_urls, parse_product_urls
@@ -53,3 +53,14 @@ def test_page_urls_use_highest_page_of_this_category():
 
 def test_single_page_category_has_no_extra_pages():
     assert parse_page_urls("<html><body></body></html>", CATEGORY_URL) == []
+
+
+def test_review_keyword_chips_are_not_variants():
+    from chewy_scraper.scraper.parsers import _parse_options
+    from bs4 import BeautifulSoup
+
+    html = """
+    <input class="kib-chip-choice__control" value="smell" aria-label="smell">
+    <input class="kib-chip-choice__control" value="for dogs" aria-label="for dogs">
+    """
+    assert _parse_options(BeautifulSoup(html, "lxml")) == []
