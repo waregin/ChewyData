@@ -41,6 +41,10 @@ SEL_FEEDING = "FEEDING_INSTRUCTIONS-section"
 class ParsedVariantOption:
     sku: str
     label: str
+    # Catalog entry ID used in the variant's /dp/<id> URL. Differs from the
+    # partNumber (sku) on older products, e.g. partNumber 66339 lives at a
+    # different /dp/ number. None = use sku.
+    entry_id: str | None = None
 
 
 @dataclass
@@ -200,6 +204,7 @@ def _parse_next_data(soup: BeautifulSoup) -> ParsedProductPage | None:
             options.append(ParsedVariantOption(
                 sku=variant["partNumber"],
                 label=_variant_label(state, variant),
+                entry_id=variant.get("entryID"),
             ))
 
     return ParsedProductPage(

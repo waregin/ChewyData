@@ -86,10 +86,11 @@ async def scrape_product_variants(
             # The page we already loaded IS this variant — no second fetch.
             variant_parsed = parsed
         else:
-            # Each SKU has its own page: same slug, /dp/<partNumber>. Fetched
+            # Each SKU has its own page: same slug, /dp/<catalog entry ID>
+            # (not the partNumber, which differs on older products). Fetched
             # because only the shown item carries ingredients and analysis,
             # which differ between flavours.
-            variant_url = _DP_ID.sub(f"/dp/{option.sku}", product_url, count=1)
+            variant_url = _DP_ID.sub(f"/dp/{option.entry_id or option.sku}", product_url, count=1)
             await limiter.wait()
             try:
                 variant_html = await with_retry(
